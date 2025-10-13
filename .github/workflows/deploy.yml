@@ -30,14 +30,34 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 🔹 Build & Push image as latest
+      - name: 🔹 Docker metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest
+            type=sha
+
+      - name: 🔹 Build & Push image (with cache)
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:latest
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      - name: 🔹 Export SHA tag
+        id: out
+        run: |
+          TAG_SHA=$(echo '${{ steps.meta.outputs.tags }}' | tr ' ' '\n' | grep 'sha-' | head -n1 | cut -d':' -f3)
+          if [ -z "$TAG_SHA" ]; then
+            TAG_SHA="latest"
+          fi
+          echo "✅ Using TAG_SHA=$TAG_SHA"
+          echo "TAG_SHA=$TAG_SHA" >> $GITHUB_OUTPUT
 
 
   deploy:
@@ -46,7 +66,7 @@ jobs:
     needs: build-and-push
 
     steps:
-      - name: 🔸 SSH into server and deploy latest image
+      - name: 🔸 SSH into server and deploy
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
@@ -55,20 +75,44 @@ jobs:
           port: 9011
           script: |
             set -e
+
             echo "🔐 Logging in to GHCR..."
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
 
             echo "📂 Changing directory to /home/deploy/react-app..."
             cd /home/deploy/react-app || { echo "❌ Directory not found!"; exit 1; }
 
-            echo "⬇️ Pulling latest image..."
-            if docker compose version >/dev/null 2>&1; then
-              docker compose pull
-              docker compose up -d
-            else
-              docker-compose pull
-              docker-compose up -d
+            echo "🔍 Checking for docker-compose.yml..."
+            if [ ! -f docker-compose.yml ]; then
+              echo "❌ docker-compose.yml not found in /home/deploy/react-app"
+              exit 1
             fi
+
+            echo "🧾 Using image tag: ${{ needs.build-and-push.outputs.out.TAG_SHA }}"
+
+            echo "📝 Updating image tag in docker-compose.yml..."
+            NEW_TAG="${{ needs.build-and-push.outputs.out.TAG_SHA }}"
+            if [ -z "$NEW_TAG" ]; then
+              NEW_TAG="latest"
+            fi
+            sed -i "s#ghcr.io/.*/${{ env.IMAGE_NAME }}:.*#ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${NEW_TAG}#g" docker-compose.yml
+
+            echo "⚙️ Detecting Docker Compose command..."
+            if docker compose version >/dev/null 2>&1; then
+              COMPOSE="docker compose"
+            elif command -v docker-compose >/dev/null 2>&1; then
+              COMPOSE="docker-compose"
+            else
+              echo "❌ Docker Compose not installed! Install it with:"
+              echo "sudo apt install docker-compose -y"
+              exit 1
+            fi
+
+            echo "⬇️ Pulling latest image..."
+            $COMPOSE pull
+
+            echo "🚀 Starting container..."
+            $COMPOSE up -d
 
             echo "🧹 Cleaning up old images..."
             docker image prune -af --filter "until=24h" || true
