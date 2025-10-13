@@ -36,6 +36,7 @@ jobs:
           tags: |
             type=raw,value=latest
             type=sha
+
       - name: Build & Push image (with cache)
         uses: docker/build-push-action@v6
         with:
@@ -57,12 +58,6 @@ jobs:
     steps:
       - name: SSH deploy (pull & restart compose)
         uses: appleboy/ssh-action@v1.2.0
-        env:
-          OWNER: ${{ github.repository_owner }}
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
-          TAG_SHA: ${{ needs.build-and-push.outputs.out.TAG_SHA }}
-          GHCR_USERNAME: ${{ secrets.GHCR_USERNAME }}
-          GHCR_TOKEN: ${{ secrets.GHCR_TOKEN }}
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
@@ -70,13 +65,17 @@ jobs:
           port: 9011
           script: |
             set -e
-            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin
 
-            cd /srv/react-app
-            # به‌روزرسانی تگ در compose (روی SHA) تا رول‌بک‌پذیر باشد
-            sed -i "s#ghcr.io/.*/${IMAGE_NAME}:.*#ghcr.io/${OWNER}/${IMAGE_NAME}:${TAG_SHA}#g" docker-compose.yml || true
+            # Login to GHCR using repo secrets (resolved on GitHub side)
+            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "${{ secrets.GHCR_USERNAME }}" --password-stdin
+
+            cd /home/deploy/react-app
+
+            # Pin compose image to the exact commit SHA tag for rollback-ability
+            sed -i "s#ghcr.io/.*/${{ env.IMAGE_NAME }}:.*#ghcr.io/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ needs.build-and-push.outputs.out.TAG_SHA }}#g" docker-compose.yml || true
 
             docker compose pull
             docker compose up -d
 
+            # Optional cleanup
             docker image prune -af --filter "until=24h" || true
