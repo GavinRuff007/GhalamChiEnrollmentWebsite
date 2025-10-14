@@ -29,7 +29,7 @@ const Login = () => {
       return;
     }
 
-    fetch("http://localhost:8080/user/" + username)
+    fetch("http://localhost:8090/user/" + username)
       .then((res) => res.json())
       .then((resp) => {
         if (!resp.username) {
