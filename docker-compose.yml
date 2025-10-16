@@ -1,0 +1,9 @@
+version: '3.8'
+
+services:
+  back-end:
+    image: ghcr.io/gavinruff007/springboot-app:latest
+    container_name: back-end
+    ports:
+      - "8090:8090"
+    restart: always

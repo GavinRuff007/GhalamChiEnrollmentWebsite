@@ -55,3 +55,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+
+*.log
+*.tmp
+.idea/
+
+
