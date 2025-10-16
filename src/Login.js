@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Form, Input, Button, Card } from "antd";
@@ -7,27 +7,13 @@ import backgroundImage from "../src/back.jpg";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [mathExpression, setMathExpression] = useState(generateMathExpression());
-  const [userAnswer, setUserAnswer] = useState("");
-  const [captchaValid, setCaptchaValid] = useState(false);
 
   useEffect(() => {
     sessionStorage.clear();
   }, []);
 
-  function generateMathExpression() {
-    const num1 = Math.floor(Math.random() * 10);
-    const num2 = Math.floor(Math.random() * 10);
-    const operator = Math.random() < 0.5 ? "+" : "-";
-    return { num1, num2, operator };
-  }
-
   const handleLogin = (values) => {
     const { username, password } = values;
-    if (!captchaValid) {
-      toast.error("لطفاً کپچا را به‌درستی حل کنید");
-      return;
-    }
 
     fetch("http://localhost:8090/user/" + username)
       .then((res) => res.json())
@@ -46,17 +32,6 @@ const Login = () => {
       .catch((err) => {
         toast.error("ورود ناموفق بود: " + err.message);
       });
-  };
-
-  const checkCaptcha = () => {
-    const correctAnswer = eval(`${mathExpression.num1} ${mathExpression.operator} ${mathExpression.num2}`);
-    setCaptchaValid(parseInt(userAnswer) === correctAnswer);
-  };
-
-  const refreshCaptcha = () => {
-    setMathExpression(generateMathExpression());
-    setUserAnswer("");
-    setCaptchaValid(false);
   };
 
   return (
@@ -86,23 +61,6 @@ const Login = () => {
               <Input.Password size="large" placeholder="رمز عبور خود را وارد کنید" />
             </Form.Item>
 
-            <Form.Item
-              label={
-                <span className="label-text">
-                  {`حل کنید: ${mathExpression.num1} ${mathExpression.operator} ${mathExpression.num2}`}
-                </span>
-              }
-              name="userCaptcha"
-            >
-              <Input
-                size="large"
-                value={userAnswer}
-                onChange={(e) => setUserAnswer(e.target.value)}
-                onBlur={checkCaptcha}
-                placeholder="پاسخ خود را وارد کنید"
-              />
-            </Form.Item>
-
             <div className="button-group">
               <Button type="primary" htmlType="submit" block size="large">
                 ورود
@@ -115,10 +73,6 @@ const Login = () => {
                 className="register-btn"
               >
                 ثبت‌نام
-              </Button>
-
-              <Button type="link" onClick={refreshCaptcha} block>
-                نوسازی کپچا
               </Button>
             </div>
           </Form>

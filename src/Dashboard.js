@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
-import { Layout, Menu, Button, ConfigProvider } from "antd";
+import { Layout, Menu, Button, ConfigProvider, theme as antdTheme } from "antd";
 import {
   UserOutlined,
   VideoCameraOutlined,
@@ -8,7 +8,8 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from "@ant-design/icons";
-import faIR from "antd/es/locale/fa_IR"; // زبان فارسی
+import faIR from "antd/es/locale/fa_IR";
+import "./Dashboard.css"; // 👈 برای فونت و استایل عمومی
 
 const { Header, Sider, Content } = Layout;
 
@@ -23,13 +24,26 @@ const Dashboard = () => {
   const menuItemStyles = { color: darkTheme ? "white" : "black" };
   const bottomButtonStyle = {
     marginRight: "8px",
-    color: darkTheme ? "#fff" : "#000",
+    color: darkTheme ? "#000" : "#000",
     borderColor: darkTheme ? "#444" : "#ddd",
   };
 
   return (
-    <ConfigProvider direction="rtl" locale={faIR}>
-      <Layout style={{ minHeight: "100vh", direction: "rtl" }}>
+    <ConfigProvider
+      direction="rtl"
+      locale={faIR}
+      theme={{
+        algorithm: darkTheme ? antdTheme.darkAlgorithm : antdTheme.defaultAlgorithm,
+        token: { fontFamily: "Vazir, sans-serif" }, // 👈 تنظیم فونت در تم AntD
+      }}
+    >
+      <Layout
+        style={{
+          minHeight: "100vh",
+          direction: "rtl",
+          fontFamily: "Vazir, sans-serif", // 👈 فونت سراسری
+        }}
+      >
         {/* Sidebar */}
         <Sider
           collapsible
@@ -45,19 +59,29 @@ const Dashboard = () => {
               margin: 16,
               background: "rgba(255, 255, 255, 0.2)",
               borderRadius: 8,
+              textAlign: "center",
+              lineHeight: "64px",
+              color: "white",
+              fontWeight: "bold",
+              fontSize: "18px",
             }}
-          />
+          >
+            {!collapsed ? "مدیریت" : "مد"}
+          </div>
+
           <Menu theme={theme} mode="inline" defaultSelectedKeys={["1"]}>
             <Menu.Item key="1" icon={<UserOutlined />} style={menuItemStyles}>
               <Link to="">
-                <span style={{ color: menuItemStyles.color }}>صفحه اصلی</span>
+                <span style={{ color: menuItemStyles.color }}>ثبت اطلاعات جدید</span>
               </Link>
             </Menu.Item>
+
             <Menu.Item key="2" icon={<VideoCameraOutlined />} style={menuItemStyles}>
-              <Link to="movies">
+              <Link to="charts">
                 <span style={{ color: menuItemStyles.color }}>نمودارها</span>
               </Link>
             </Menu.Item>
+
             <Menu.Item key="3" icon={<UploadOutlined />} style={menuItemStyles}>
               <Link to="upload">
                 <span style={{ color: menuItemStyles.color }}>آپلود فایل</span>
@@ -77,6 +101,7 @@ const Dashboard = () => {
               padding: "0 16px",
               background: darkTheme ? "#001529" : "#fff",
               color: darkTheme ? "#fff" : "#000",
+              boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
             }}
           >
             <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -85,6 +110,7 @@ const Dashboard = () => {
               </Button>
               <h3 style={{ margin: 0 }}>پنل مدیریت</h3>
             </div>
+
             <Button onClick={toggleTheme} style={bottomButtonStyle}>
               تغییر به تم {darkTheme ? "روشن" : "تاریک"}
             </Button>
@@ -93,11 +119,12 @@ const Dashboard = () => {
           <Content
             style={{
               margin: "16px",
-              background: darkTheme ? "#141414" : "#f5f5f5",
-              color: darkTheme ? "#fff" : "#000",
+              background: "#f5f5f5",
+              color: "#000",
               borderRadius: "12px",
               padding: 24,
               minHeight: 360,
+              boxShadow: "0 0 8px rgba(0,0,0,0.1)",
             }}
           >
             {/* Outlet برای صفحات داخلی */}

@@ -1,0 +1,19 @@
+/* ====== فونت وزیری ====== */
+@import url("https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css");
+
+body, * {
+  font-family: "Vazir", sans-serif !important;
+}
+
+/* ====== تنظیمات ظاهری ====== */
+.logo {
+  font-family: "Vazir", sans-serif;
+}
+
+.site-layout {
+  transition: all 0.3s ease;
+}
+
+.ant-layout-sider-trigger {
+  font-family: "Vazir", sans-serif;
+}
