@@ -17,3 +17,16 @@ body, * {
 .ant-layout-sider-trigger {
   font-family: "Vazir", sans-serif;
 }
+
+/* ===== اصلاح Tooltip برای حالت جمع‌شده‌ی سایدبار در تم روشن ===== */
+.ant-tooltip-inner {
+  background-color: #1677ff !important; /* آبی هماهنگ با تم */
+  color: #fff !important; /* متن سفید */
+  font-family: "Vazir", sans-serif !important;
+  font-size: 13px;
+}
+
+/* مثلث کوچک Tooltip */
+.ant-tooltip-arrow::before {
+  background-color: #1677ff !important;
+}
