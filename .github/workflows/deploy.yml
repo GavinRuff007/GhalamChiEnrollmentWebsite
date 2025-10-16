@@ -10,7 +10,7 @@ permissions:
 
 env:
   IMAGE_NAME: react-app
-  GHCR_OWNER: gavinruff007   # 👈 همه‌جا lowercase ثابت
+  GHCR_OWNER: gavinruff007  
 
 jobs:
   build-and-push:
