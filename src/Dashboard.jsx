@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { Layout, Menu, Button, ConfigProvider, theme as antdTheme } from "antd";
 import {
-  UserAddOutlined,  // 👈 اضافه شد
+  UserAddOutlined,  
   DatabaseOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
