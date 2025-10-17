@@ -4,10 +4,9 @@ import Dashboard from './Dashboard';
 import DashboardHome from './DashboardHome';
 import Records from './Records'; // 👈 صفحه جدید برای اطلاعات ثبت‌شده
 import Login from './Login';
-import Register from './Register';
 import { ToastContainer } from 'react-toastify';
 import AppHeader from './Appheader';
-import Customer from './Customer';
+
 
 function App() {
   return (
@@ -22,8 +21,6 @@ function App() {
         <Routes>
           {/* مسیرهای عمومی */}
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/customer" element={<Customer />} />
 
           {/* مسیر اصلی داشبورد با صفحات داخلی (nested routes) */}
           <Route path="/dashboard" element={<Dashboard />}>
