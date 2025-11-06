@@ -1,4 +1,4 @@
-name: Build & Deploy Spring Boot (Docker container)
+name: Build, Push and Deploy Spring Boot Application with Docker Compose
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
 
 env:
   IMAGE_NAME: springboot-app
-  GHCR_OWNER: gavinruff007  
+  GHCR_OWNER: gavinruff007
 
 jobs:
   build-and-push:
@@ -94,7 +94,7 @@ jobs:
             echo "⬇️ Pulling latest image..."
             $COMPOSE pull
 
-            echo "🚀 Starting container..."
+            echo "🚀 Starting containers..."
             $COMPOSE up -d
 
             echo "🧹 Cleaning up old images..."
