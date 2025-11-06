@@ -1,9 +1,33 @@
 version: '3.8'
 
 services:
+  # سرویس اپلیکیشن Spring Boot
   back-end:
     image: ghcr.io/gavinruff007/springboot-app:latest
     container_name: back-end
     ports:
       - "8090:8090"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/educationAccountingSystem?createDatabaseIfNotExist=true
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=test
+    depends_on:
+      - mysql  # این سرویس باید قبل از back-end بالا بیاید
     restart: always
+
+  # سرویس دیتابیس MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: test  # پسورد روت دیتابیس
+      MYSQL_DATABASE: educationAccountingSystem  # نام دیتابیس
+    volumes:
+      - mysql_data:/var/lib/mysql  # برای نگهداری داده‌ها
+    ports:
+      - "3306:3306"
+    restart: always
+
+volumes:
+  mysql_data:
+    driver: local
