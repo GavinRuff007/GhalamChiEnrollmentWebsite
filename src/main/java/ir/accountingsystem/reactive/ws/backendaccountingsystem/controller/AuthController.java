@@ -13,7 +13,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.Map;
 
@@ -57,43 +56,26 @@ public class AuthController {
 
     @PostMapping("/refresh-check")
     public ResponseEntity<?> checkRefreshToken(@CookieValue(value = "refreshToken", required = false) String refreshToken) {
-
         if (refreshToken == null) {
             return ResponseEntity.status(401).body(Map.of(
                     "state", "invalid",
                     "message", "No refresh token found"
             ));
         }
-
-        // بررسی معتبر بودن توکن
         if (!jwtTokenProvider.validateToken(refreshToken)) {
             return ResponseEntity.status(401).body(Map.of(
                     "state", "invalid",
                     "message", "Refresh token invalid or expired"
             ));
         }
-
-        // استخراج نام کاربری از توکن
         String username = jwtTokenProvider.getUsername(refreshToken);
-
-        // گرفتن کاربر از دیتابیس
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // استخراج نقش‌ها
         List<String> roles = user.getRoles().stream().map(Role::getName).toList();
-
-        // پاسخ موفق
         return ResponseEntity.ok(Map.of(
                 "state", "ok",
                 "roles", roles
         ));
     }
-
-
-
-
-
-
 
 }
