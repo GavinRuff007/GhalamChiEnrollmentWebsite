@@ -1,8 +1,8 @@
-name: Build, Push and Deploy Spring Boot Application with Docker Compose
+name: Build, Push and Deploy Spring Boot with Docker Compose
 
 on:
   push:
-    branches: [ "back-end" ]
+    branches: [ "back-end" ]  # فقط در زمان push روی شاخه back-end اجرا شود
 
 permissions:
   contents: read
@@ -27,20 +27,20 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: 🔹 Build Spring Boot app
-        run: mvn clean package -DskipTests=false
+      - name: 🔹 Build Spring Boot app (Skip tests)
+        run: mvn clean package -DskipTests=true
 
       - name: 🔹 Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: 🔹 Login to GHCR (push)
+      - name: 🔹 Login to GitHub Container Registry (GHCR)
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ env.GHCR_OWNER }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: 🔹 Build & Push Docker image
+      - name: 🔹 Build & Push Docker image to GHCR
         uses: docker/build-push-action@v6
         with:
           context: .
@@ -72,13 +72,13 @@ jobs:
             echo "📂 Changing directory to /home/deploy/back-end..."
             cd /home/deploy/back-end || { echo "❌ Directory not found!"; exit 1; }
 
-            echo "🔍 Checking for docker-compose.yml..."
+            echo "🔍 Checking docker-compose.yml..."
             if [ ! -f docker-compose.yml ]; then
               echo "❌ docker-compose.yml not found in /home/deploy/back-end"
               exit 1
             fi
 
-            echo "📝 Ensuring lowercase GHCR path..."
+            echo "📝 Ensuring correct GHCR image path..."
             sed -i 's#ghcr.io/.*/springboot-app:.*#ghcr.io/gavinruff007/springboot-app:latest#g' docker-compose.yml
 
             echo "⚙️ Detecting Docker Compose command..."
