@@ -1,7 +1,7 @@
 package ir.accountingsystem.reactive.ws.backendaccountingsystem.migration;
 
-import ir.accountingsystem.reactive.ws.backendaccountingsystem.model.Role;
-import ir.accountingsystem.reactive.ws.backendaccountingsystem.model.User;
+import ir.accountingsystem.reactive.ws.backendaccountingsystem.model.RoleModel;
+import ir.accountingsystem.reactive.ws.backendaccountingsystem.model.UserModel;
 import ir.accountingsystem.reactive.ws.backendaccountingsystem.repository.RoleRepository;
 import ir.accountingsystem.reactive.ws.backendaccountingsystem.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,20 +20,20 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) {
         if (roleRepo.count() == 0) {
-            Role adminRole = roleRepo.save(new Role(null, "ROLE_ADMIN"));
-            Role userRole = roleRepo.save(new Role(null, "ROLE_USER"));
+            RoleModel adminRoleModel = roleRepo.save(new RoleModel(null, "ROLE_ADMIN"));
+            RoleModel userRoleModel = roleRepo.save(new RoleModel(null, "ROLE_USER"));
 
-            User admin = new User();
+            UserModel admin = new UserModel();
             admin.setUsername("admin");
             admin.setPassword(encoder.encode("1234"));
-            admin.getRoles().add(adminRole);
+            admin.getRoleModels().add(adminRoleModel);
             userRepo.save(admin);
 
-            User user = new User();
-            user.setUsername("user");
-            user.setPassword(encoder.encode("1234"));
-            user.getRoles().add(userRole);
-            userRepo.save(user);
+            UserModel userModel = new UserModel();
+            userModel.setUsername("user");
+            userModel.setPassword(encoder.encode("1234"));
+            userModel.getRoleModels().add(userRoleModel);
+            userRepo.save(userModel);
         }
     }
 }

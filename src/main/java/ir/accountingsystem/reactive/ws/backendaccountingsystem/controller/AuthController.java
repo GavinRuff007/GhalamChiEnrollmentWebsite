@@ -1,7 +1,7 @@
 package ir.accountingsystem.reactive.ws.backendaccountingsystem.controller;
 
-import ir.accountingsystem.reactive.ws.backendaccountingsystem.model.Role;
-import ir.accountingsystem.reactive.ws.backendaccountingsystem.model.User;
+import ir.accountingsystem.reactive.ws.backendaccountingsystem.model.RoleModel;
+import ir.accountingsystem.reactive.ws.backendaccountingsystem.model.UserModel;
 import ir.accountingsystem.reactive.ws.backendaccountingsystem.repository.UserRepository;
 import ir.accountingsystem.reactive.ws.backendaccountingsystem.util.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletResponse;
@@ -44,8 +44,8 @@ public class AuthController {
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         System.out.println("✅ Cookie Set: " + cookie.toString());
-        User user = userRepository.findByUsername(request.get("username")).orElseThrow();
-        List<String> roles = user.getRoles().stream().map(Role::getName).toList();
+        UserModel userModel = userRepository.findByUsername(request.get("username")).orElseThrow();
+        List<String> roles = userModel.getRoleModels().stream().map(RoleModel::getName).toList();
         return ResponseEntity.ok(Map.of(
                 "accessToken", accessToken,
                 "refreshToken", refreshToken,
@@ -69,9 +69,9 @@ public class AuthController {
             ));
         }
         String username = jwtTokenProvider.getUsername(refreshToken);
-        User user = userRepository.findByUsername(username)
+        UserModel userModel = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        List<String> roles = user.getRoles().stream().map(Role::getName).toList();
+        List<String> roles = userModel.getRoleModels().stream().map(RoleModel::getName).toList();
         return ResponseEntity.ok(Map.of(
                 "state", "ok",
                 "roles", roles
