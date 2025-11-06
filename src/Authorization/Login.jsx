@@ -10,7 +10,7 @@ const Login = () => {
   const handleLogin = (values) => {
     const { username, password } = values;
 
-    fetch("http://localhost:8090/api/auth/login", {
+    fetch("http://217.182.185.198:8090/api/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
