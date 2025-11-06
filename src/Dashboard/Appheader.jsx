@@ -10,14 +10,22 @@ const AppHeader = () => {
   useEffect(() => {
     if (location.pathname === "/login" || location.pathname === "/register") {
       setShowMenu(false);
+      return;
+    }
+
+    setShowMenu(true);
+
+    const token = sessionStorage.getItem("accessToken");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    const username = sessionStorage.getItem("username");
+    if (username) {
+      setDisplayUsername(username);
     } else {
-      setShowMenu(true);
-      const username = sessionStorage.getItem("username");
-      if (!username) {
-        navigate("/login");
-      } else {
-        setDisplayUsername(username);
-      }
+      setDisplayUsername("کاربر");
     }
   }, [location, navigate]);
 
@@ -41,19 +49,18 @@ const AppHeader = () => {
             fontFamily: "'Vazir', 'Segoe UI', Tahoma, sans-serif",
           }}
         >
-          {/* بخش راست */}
           <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
             <Link
-              to="/"
+              to="/dashboard"
               style={{ color: "white", textDecoration: "none", fontWeight: 500 }}
             >
-              صفحه اصلی
+              داشبورد
             </Link>
             <Link
-              to="/customer"
+              to="/dashboard/records"
               style={{ color: "white", textDecoration: "none", fontWeight: 500 }}
             >
-              مشتریان
+              اطلاعات ثبت‌شده
             </Link>
           </div>
 

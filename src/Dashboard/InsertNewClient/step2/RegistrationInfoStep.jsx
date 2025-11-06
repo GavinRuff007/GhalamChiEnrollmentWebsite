@@ -1,0 +1,406 @@
+import React from "react";
+
+const RegistrationInfoStep = ({
+  typeOption,
+  setTypeOption,
+  examCount,
+  setExamCount,
+  examFeeOption,
+  setExamFeeOption,
+  customExamFee,
+  setCustomExamFee,
+  bookFeeOption,
+  setBookFeeOption,
+  customBookFee,
+  setCustomBookFee,
+  discountExam,
+  setDiscountExam,
+  discountClass,
+  setDiscountClass,
+  classCount,
+  classInfo,
+  handleClassChange,
+  subjectList,
+  errors,
+  specialSupport,
+  setSpecialSupport,
+  summerSupportFeeOption,
+  setSummerSupportFeeOption,
+  summerSupportFee,
+  setSummerSupportFee,
+  fallSupportFeeOption,
+  setFallSupportFeeOption,
+  fallSupportFee,
+  setFallSupportFee,
+  winterSupportFeeOption,
+  setWinterSupportFeeOption,
+  winterSupportFee,
+  setWinterSupportFee,
+  springSupportFeeOption,
+  setSpringSupportFeeOption,
+  springSupportFee,
+  setSpringSupportFee,
+  discountSupport,
+  setDiscountSupport,
+  formData,
+  handleChange,
+}) => {
+  return (
+    <div className="next-page">
+      <h3>مرحله دوم: اطلاعات ثبت‌نام</h3>
+      <form className="student-form">
+        <div className="form-grid">
+          {/* ===== نوع ثبت‌نام ===== */}
+          <div className="form-group">
+            <label>
+              نوع <span style={{ color: "red" }}>*</span>
+            </label>
+            <select
+              value={typeOption}
+              onChange={(e) => {
+                const value = e.target.value;
+                setTypeOption(value);
+                if (["1", "2", "3", "4"].includes(value)) {
+                  setExamCount("none");
+                  setExamFeeOption("0");
+                } else {
+                  setExamCount("");
+                  setExamFeeOption("");
+                }
+              }}
+              className={errors.typeOption ? "error" : ""}
+            >
+              <option value="">انتخاب کنید</option>
+              <option value="1">1کلاس</option>
+              <option value="2">2کلاس</option>
+              <option value="3">3کلاس</option>
+              <option value="4">4کلاس</option>
+              <option value="آزمون">آزمون</option>
+              <option value="1+آزمون">1کلاس+آزمون</option>
+              <option value="2+آزمون">2کلاس+آزمون</option>
+              <option value="3+آزمون">3کلاس+آزمون</option>
+              <option value="4+آزمون">4کلاس+آزمون</option>
+            </select>
+            {errors.typeOption && (
+              <span className="error-text">{errors.typeOption}</span>
+            )}
+          </div>
+
+          {/* ===== نام مسئول جذب ===== */}
+          <div className="form-group">
+            <label>نام مسئول جذب</label>
+            <select
+              name="recruiter"
+              value={formData.recruiter || ""}
+              onChange={handleChange}
+            >
+              <option value="">انتخاب کنید</option>
+              {[...Array(10)].map((_, i) => (
+                <option key={i + 1} value={`مسئول ${i + 1}`}>
+                  مسئول {i + 1}
+                </option>
+              ))}
+              <option value="custom">وارد کردن دستی</option>
+            </select>
+
+            {/* نمایش ورودی دستی برای وارد کردن نام مسئول جذب */}
+            {formData.recruiter === "custom" && (
+              <input
+                type="text"
+                name="recruiter"
+                placeholder="نام مسئول جذب را وارد کنید"
+                value={formData.recruiter}
+                onChange={handleChange}
+                className={errors.recruiter ? "error" : ""}
+                style={{ marginTop: "8px" }}
+              />
+            )}
+          </div>
+
+          {/* ===== تعداد آزمون ثبت‌نامی ===== */}
+          <div className="form-group">
+            <label>
+              تعداد آزمون ثبت‌نامی <span style={{ color: "red" }}>*</span>
+            </label>
+            <select
+              value={examCount}
+              onChange={(e) => setExamCount(e.target.value)}
+              disabled={["1", "2", "3", "4"].includes(typeOption)}
+              className={errors.examCount ? "error" : ""}
+            >
+              <option value="">انتخاب کنید</option>
+              <option value="none">آزمون ندارد</option>
+              {[...Array(24)].map((_, i) => (
+                <option key={i + 1} value={i + 1}>
+                  {i + 1}
+                </option>
+              ))}
+            </select>
+            {errors.examCount && (
+              <span className="error-text">{errors.examCount}</span>
+            )}
+          </div>
+
+          {/* ===== شهریه یک آزمون ===== */}
+          <div className="form-group">
+            <label>
+              شهریه یک آزمون <span style={{ color: "red" }}>*</span>
+            </label>
+            <select
+              value={examCount === "none" ? "0" : examFeeOption}
+              disabled={examCount === "none"}
+              onChange={(e) => setExamFeeOption(e.target.value)}
+              className={errors.examFeeOption ? "error" : ""}
+            >
+              {examCount === "none" ? (
+                <option value="0">0 تومان</option>
+              ) : (
+                <>
+                  <option value="">انتخاب کنید</option>
+                  <option value="100000">100٬000 تومان</option>
+                  <option value="200000">200٬000 تومان</option>
+                  <option value="300000">300٬000 تومان</option>
+                  <option value="custom">انتخاب مقدار دلخواه</option>
+                </>
+              )}
+            </select>
+            {examFeeOption === "custom" && examCount !== "none" && (
+              <input
+                type="text"
+                placeholder="مقدار دلخواه (تومان)"
+                value={
+                  customExamFee
+                    ? customExamFee.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    : ""
+                }
+                onChange={(e) => {
+                  const rawValue = e.target.value
+                    .replace(/,/g, "")
+                    .replace(/\D/g, "");
+                  setCustomExamFee(rawValue);
+                }}
+                style={{ marginTop: "8px" }}
+              />
+            )}
+            {errors.examFeeOption && (
+              <span className="error-text">{errors.examFeeOption}</span>
+            )}
+          </div>
+
+          {/* ===== شهریه کتاب ===== */}
+          <div className="form-group">
+            <label>شهریه کتاب</label>
+            <select
+              value={bookFeeOption}
+              onChange={(e) => setBookFeeOption(e.target.value)}
+            >
+              <option value="">انتخاب کنید</option>
+              <option value="50000">50٬000 تومان</option>
+              <option value="100000">100٬000 تومان</option>
+              <option value="150000">150٬000 تومان</option>
+              <option value="custom">انتخاب مقدار دلخواه</option>
+            </select>
+
+            {bookFeeOption === "custom" && (
+              <input
+                type="text"
+                placeholder="مقدار دلخواه (تومان)"
+                value={
+                  customBookFee
+                    ? customBookFee.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    : ""
+                }
+                onChange={(e) => {
+                  const rawValue = e.target.value
+                    .replace(/,/g, "")
+                    .replace(/\D/g, "");
+                  setCustomBookFee(rawValue);
+                }}
+                style={{ marginTop: "8px" }}
+              />
+            )}
+          </div>
+
+          {/* ===== تخفیف آزمون ===== */}
+          <div className="form-group">
+            <label>تخفیف آزمون (تومان)</label>
+            <input
+              type="text"
+              placeholder="مبلغ تخفیف آزمون"
+              value={
+                discountExam
+                  ? discountExam.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                  : ""
+              }
+              onChange={(e) => {
+                const rawValue = e.target.value.replace(/,/g, "").replace(/\D/g, "");
+                setDiscountExam(rawValue);
+              }}
+            />
+          </div>
+
+          {/* ===== تخفیف کلاس ===== */}
+          <div className="form-group">
+            <label>تخفیف کلاس (تومان)</label>
+            <input
+              type="text"
+              placeholder="مبلغ تخفیف کلاس"
+              value={
+                discountClass
+                  ? discountClass.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                  : ""
+              }
+              onChange={(e) => {
+                const rawValue = e.target.value.replace(/,/g, "").replace(/\D/g, "");
+                setDiscountClass(rawValue);
+              }}
+            />
+          </div>
+        </div>
+
+        {/* ===== کلاس‌ها ===== */}
+        {classCount > 0 && (
+          <>
+            <hr />
+            <h4 style={{ marginBottom: "10px" }}>کلاس‌ها</h4>
+            <div className="form-grid">
+              {Array.from({ length: classCount }).map((_, index) => (
+                <React.Fragment key={index}>
+                  {/* ===== نام کلاس ===== */}
+                  <div className="form-group">
+                    <label>
+                      نام کلاس {index + 1} <span style={{ color: "red" }}>*</span>
+                    </label>
+                    {subjectList.length > 0 ? (
+                      <select
+                        value={classInfo[index]?.name || ""}
+                        onChange={(e) =>
+                          handleClassChange(index, "name", e.target.value)
+                        }
+                        className={errors[`class_name_${index}`] ? "error" : ""}
+                      >
+                        <option value="">انتخاب کنید</option>
+                        {subjectList.map((subj, idx) => (
+                          <option key={idx} value={subj}>
+                            {subj}
+                          </option>
+                        ))}
+                        <option value="custom">وارد کردن دستی</option>
+                      </select>
+                    ) : (
+                      <input
+                        type="text"
+                        placeholder={`نام کلاس ${index + 1}`}
+                        value={classInfo[index]?.name || ""}
+                        onChange={(e) =>
+                          handleClassChange(index, "name", e.target.value)
+                        }
+                        className={errors[`class_name_${index}`] ? "error" : ""}
+                      />
+                    )}
+                    {classInfo[index]?.name === "custom" && (
+                      <input
+                        type="text"
+                        placeholder="نام کلاس را وارد کنید"
+                        value={classInfo[index]?.customName || ""}
+                        onChange={(e) =>
+                          handleClassChange(index, "customName", e.target.value)
+                        }
+                        className={errors[`class_name_${index}`] ? "error" : ""}
+                        style={{ marginTop: "8px" }}
+                      />
+                    )}
+                    {errors[`class_name_${index}`] && (
+                      <span className="error-text">
+                        {errors[`class_name_${index}`]}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* ===== شهریه کلاس ===== */}
+                  <div className="form-group">
+                    <label>
+                      شهریه کلاس {index + 1} <span style={{ color: "red" }}>*</span>
+                    </label>
+                    <select
+                      value={classInfo[index]?.feeOption || ""}
+                      onChange={(e) =>
+                        handleClassChange(index, "feeOption", e.target.value)
+                      }
+                      className={errors[`class_fee_${index}`] ? "error" : ""}
+                    >
+                      <option value="">انتخاب کنید</option>
+                      <option value="200000">200٬000 تومان</option>
+                      <option value="300000">300٬000 تومان</option>
+                      <option value="400000">400٬000 تومان</option>
+                      <option value="custom">انتخاب مقدار دلخواه</option>
+                    </select>
+
+                    {classInfo[index]?.feeOption === "custom" && (
+                      <input
+                        type="text"
+                        placeholder="مقدار دلخواه (تومان)"
+                        value={
+                          classInfo[index]?.customFee
+                            ? classInfo[index].customFee.replace(
+                                /\B(?=(\d{3})+(?!\d))/g,
+                                ","
+                              )
+                            : ""
+                        }
+                        onChange={(e) => {
+                          const rawValue = e.target.value
+                            .replace(/,/g, "")
+                            .replace(/\D/g, "");
+                          handleClassChange(index, "customFee", rawValue);
+                        }}
+                        style={{ marginTop: "8px" }}
+                        className={errors[`class_fee_${index}`] ? "error" : ""}
+                      />
+                    )}
+                  </div>
+                </React.Fragment>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* ===== پشتیبان ویژه ===== */}
+        <hr />
+        <div className="special-toggle-container">
+          <div className="toggle-right">
+            <label style={{ fontWeight: "bold", marginLeft: "10px" }}>
+              متقاضی خواستار پشتیبانی ویژه است
+            </label>
+            <input
+              type="checkbox"
+              checked={specialSupport}
+              onChange={(e) => setSpecialSupport(e.target.checked)}
+              style={{ width: "20px", height: "20px", cursor: "pointer" }}
+            />
+          </div>
+        </div>
+
+        {/* ===== توضیحات ===== */}
+        <hr style={{ margin: "30px 0", border: "1px solid #ccc" }} />
+        <div className="form-group" style={{ width: "100%" }}>
+          <label>توضیحات مشتری</label>
+          <textarea
+            rows="4"
+            placeholder="توضیحات یا یادداشت‌های مشتری را وارد کنید..."
+            style={{
+              width: "100%",
+              resize: "vertical",
+              padding: "10px",
+              borderRadius: "8px",
+              border: "1px solid #ccc",
+              fontFamily: "inherit",
+            }}
+          />
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default RegistrationInfoStep;

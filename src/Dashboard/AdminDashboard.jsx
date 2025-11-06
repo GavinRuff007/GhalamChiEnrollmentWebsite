@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { Layout, Menu, Button, ConfigProvider, theme as antdTheme } from "antd";
 import {
-  UserAddOutlined,  
+  UserAddOutlined,
   DatabaseOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
+  SettingOutlined, // آیکون چرخ دنده
 } from "@ant-design/icons";
 
 import faIR from "antd/es/locale/fa_IR";
@@ -13,7 +14,7 @@ import "./Dashboard.css";
 
 const { Header, Sider, Content } = Layout;
 
-const Dashboard = () => {
+const AdminDashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [darkTheme, setDarkTheme] = useState(true);
 
@@ -23,12 +24,33 @@ const Dashboard = () => {
   const theme = darkTheme ? "dark" : "light";
   const menuItemStyles = { color: darkTheme ? "white" : "black" };
   const bottomButtonStyle = {
-      marginRight: "8px",
-      color: darkTheme ? "#fff" : "#000", // 👈 وقتی تم تیره است، متن سفید شود
-      borderColor: darkTheme ? "#444" : "#ddd",
-      backgroundColor: darkTheme ? "#1677ff" : "#f0f0f0", // (اختیاری) زمینه‌ هم زیباتر می‌شود
-};
+    marginRight: "8px",
+    color: darkTheme ? "#fff" : "#000",
+    borderColor: darkTheme ? "#444" : "#ddd",
+    backgroundColor: darkTheme ? "#1677ff" : "#f0f0f0",
+  };
 
+  // ساخت آرایه ای از آیتم های منو با استفاده از `items`
+  const menuItems = [
+    {
+      key: "3", // آیتم جدید تنظیمات
+      icon: <SettingOutlined />,
+      label: "تنظیمات ثبت‌نام",
+      link: "config", // مسیر کامپوننت جدید
+    },
+    {
+      key: "1",
+      icon: <UserAddOutlined />,
+      label: "ثبت اطلاعات جدید",
+      link: "",
+    },
+    {
+      key: "2",
+      icon: <DatabaseOutlined />,
+      label: "اطلاعات ثبت‌شده",
+      link: "records",
+    }
+  ];
 
   return (
     <ConfigProvider
@@ -71,21 +93,11 @@ const Dashboard = () => {
             {!collapsed ? "مدیریت" : "مد"}
           </div>
 
-          <Menu theme={theme} mode="inline" defaultSelectedKeys={["1"]}>
-            {/* ثبت اطلاعات جدید */}
-            <Menu.Item key="1" icon={<UserAddOutlined  />} style={menuItemStyles}>
-              <Link to="">
-                <span style={{ color: menuItemStyles.color }}>ثبت اطلاعات جدید</span>
-              </Link>
-            </Menu.Item>
-
-            {/* اطلاعات ثبت‌شده (به‌جای آپلود فایل) */}
-            <Menu.Item key="2" icon={<DatabaseOutlined />} style={menuItemStyles}>
-              <Link to="records">
-                <span style={{ color: menuItemStyles.color }}>اطلاعات ثبت‌شده</span>
-              </Link>
-            </Menu.Item>
-          </Menu>
+          <Menu theme={theme} mode="inline" defaultSelectedKeys={["1"]} items={menuItems.map(item => ({
+            key: item.key,
+            icon: item.icon,
+            label: <Link to={item.link}>{item.label}</Link>,
+          }))} />
         </Sider>
 
         {/* Main Layout */}
@@ -134,4 +146,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default AdminDashboard;

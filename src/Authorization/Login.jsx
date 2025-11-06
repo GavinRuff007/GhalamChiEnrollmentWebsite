@@ -1,30 +1,44 @@
-import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { Form, Input, Button, Card } from "antd";
 import "./login.css";
-import backgroundImage from "../src/back.jpg";
+import backgroundImage from "./assets/back.jpg";
 
 const Login = () => {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    sessionStorage.clear();
-  }, []);
-
   const handleLogin = (values) => {
     const { username, password } = values;
 
-    fetch("http://217.182.185.198:8090/user/" + username)
+    fetch("http://localhost:8090/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ username, password }),
+      credentials: "include",
+    })
       .then((res) => res.json())
       .then((resp) => {
-        if (!resp.username) {
-          toast.error("نام کاربری یا رمز عبور نادرست است");
-        } else if (resp.password === password) {
+        if (resp.state === "OK") {
           toast.success("ورود با موفقیت انجام شد");
-          sessionStorage.setItem("username", username);
-          sessionStorage.setItem("userrole", resp.role);
-          navigate("/");
+
+          // ذخیره فقط accessToken در sessionStorage
+          sessionStorage.setItem("accessToken", resp.accessToken);
+          console.log("Access Token ذخیره شد:", sessionStorage.getItem("accessToken"));
+
+          // پاک شدن خودکار بعد از ۵ دقیقه
+          setTimeout(() => {
+            sessionStorage.removeItem("accessToken");
+            toast.info("توکن منقضی شد.");
+          }, 5 * 60 * 1000);
+
+          // هدایت به داشبورد
+          if (resp.roles && resp.roles.includes("ROLE_ADMIN")) {
+            navigate("/adminDashboard");
+          } else {
+            navigate("/dashboard");
+          }
         } else {
           toast.error("نام کاربری یا رمز عبور اشتباه است");
         }
