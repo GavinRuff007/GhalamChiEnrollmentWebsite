@@ -21,7 +21,6 @@ const Validation = ({
       }
     });
 
-    // Validate National Code length
     if (!/^\d{10}$/.test(formData.nationalCode)) {
       newErrors.nationalCode = "کد ملی باید 10 رقم باشد";
     }

@@ -6,7 +6,7 @@ import {
   DatabaseOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  SettingOutlined, // آیکون چرخ دنده
+  SettingOutlined, 
 } from "@ant-design/icons";
 
 import faIR from "antd/es/locale/fa_IR";
@@ -30,13 +30,12 @@ const AdminDashboard = () => {
     backgroundColor: darkTheme ? "#1677ff" : "#f0f0f0",
   };
 
-  // ساخت آرایه ای از آیتم های منو با استفاده از `items`
   const menuItems = [
     {
-      key: "3", // آیتم جدید تنظیمات
+      key: "3", 
       icon: <SettingOutlined />,
       label: "تنظیمات ثبت‌نام",
-      link: "config", // مسیر کامپوننت جدید
+      link: "config", 
     },
     {
       key: "1",
@@ -68,7 +67,6 @@ const AdminDashboard = () => {
           fontFamily: "Vazir, sans-serif",
         }}
       >
-        {/* Sidebar */}
         <Sider
           collapsible
           collapsed={collapsed}
@@ -100,7 +98,6 @@ const AdminDashboard = () => {
           }))} />
         </Sider>
 
-        {/* Main Layout */}
         <Layout className="site-layout">
           <Header
             className="site-layout-background"
@@ -137,7 +134,6 @@ const AdminDashboard = () => {
               boxShadow: "0 0 8px rgba(0,0,0,0.1)",
             }}
           >
-            {/* Outlet برای صفحات داخلی */}
             <Outlet />
           </Content>
         </Layout>

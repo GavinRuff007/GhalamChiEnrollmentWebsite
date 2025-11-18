@@ -5,9 +5,8 @@ import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 
 const PersonalInfoStep = ({ formData, errors, setFormData, handleChange, handleGradeChange }) => {
-  // ✅ کنترل لحظه‌ای برای کد ملی (فقط عدد و ۱۰ رقم)
   const handleNationalCodeChange = (e) => {
-    const value = e.target.value.replace(/\D/g, ""); // فقط اعداد مجازند
+    const value = e.target.value.replace(/\D/g, ""); 
     if (value.length <= 10) {
       setFormData({ ...formData, nationalCode: value });
     }

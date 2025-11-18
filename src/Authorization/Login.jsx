@@ -7,10 +7,12 @@ import backgroundImage from "./assets/back.jpg";
 const Login = () => {
   const navigate = useNavigate();
 
+  const apiBaseUrl = process.env.REACT_APP_API_URL;
+
   const handleLogin = (values) => {
     const { username, password } = values;
 
-    fetch("http://217.182.185.198:8090/api/auth/login", {
+    fetch(`${apiBaseUrl}/api/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -23,17 +25,20 @@ const Login = () => {
         if (resp.state === "OK") {
           toast.success("ورود با موفقیت انجام شد");
 
-          // ذخیره فقط accessToken در sessionStorage
+          // ذخیره توکن در sessionStorage
           sessionStorage.setItem("accessToken", resp.accessToken);
-          console.log("Access Token ذخیره شد:", sessionStorage.getItem("accessToken"));
+          console.log(
+            "Access Token ذخیره شد:",
+            sessionStorage.getItem("accessToken")
+          );
 
-          // پاک شدن خودکار بعد از ۵ دقیقه
+          // حذف توکن بعد از ۵ دقیقه
           setTimeout(() => {
             sessionStorage.removeItem("accessToken");
             toast.info("توکن منقضی شد.");
           }, 5 * 60 * 1000);
 
-          // هدایت به داشبورد
+          // انتقال به پنل مناسب
           if (resp.roles && resp.roles.includes("ROLE_ADMIN")) {
             navigate("/adminDashboard");
           } else {
