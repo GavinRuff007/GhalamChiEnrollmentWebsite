@@ -6,22 +6,24 @@ import persian_fa from "react-date-object/locales/persian_fa";
 
 const PersonalInfoStep = ({ formData, errors, setFormData, handleChange, handleGradeChange }) => {
   const handleNationalCodeChange = (e) => {
-    const value = e.target.value.replace(/\D/g, ""); 
+    const value = e.target.value.replace(/\D/g, "");
     if (value.length <= 10) {
       setFormData({ ...formData, nationalCode: value });
     }
   };
 
+  const gradeNames = ["اول", "دوم", "سوم", "چهارم", "پنجم", "ششم"];
+
   return (
     <>
       <h3>فرم اطلاعات شخصی</h3>
+
       <form className="student-form">
         <div className="form-grid">
-          {/* ===== کد مالی (الزامی) ===== */}
+
+          {/* کد مالی */}
           <div className="form-group">
-            <label>
-              کد مالی <span style={{ color: "red" }}>*</span>
-            </label>
+            <label>کد مالی <span style={{ color: "red" }}>*</span></label>
             <input
               name="code"
               value={formData.code}
@@ -32,20 +34,15 @@ const PersonalInfoStep = ({ formData, errors, setFormData, handleChange, handleG
             {errors.code && <span className="error-text">{errors.code}</span>}
           </div>
 
-          {/* ===== تاریخ ثبت‌نام (الزامی) ===== */}
+          {/* تاریخ ثبت‌نام */}
           <div className="form-group">
-            <label>
-              تاریخ ثبت‌نام <span style={{ color: "red" }}>*</span>
-            </label>
+            <label>تاریخ ثبت‌نام <span style={{ color: "red" }}>*</span></label>
             <DatePicker
               calendar={persian}
               locale={persian_fa}
               value={formData.date}
               onChange={(date) =>
-                setFormData({
-                  ...formData,
-                  date: date?.format?.("YYYY/MM/DD") || "",
-                })
+                setFormData({ ...formData, date: date?.format?.("YYYY/MM/DD") || "" })
               }
               inputClass="custom-input"
               containerStyle={{ width: "100%" }}
@@ -54,11 +51,9 @@ const PersonalInfoStep = ({ formData, errors, setFormData, handleChange, handleG
             {errors.date && <span className="error-text">{errors.date}</span>}
           </div>
 
-          {/* ===== نام (الزامی) ===== */}
+          {/* نام */}
           <div className="form-group">
-            <label>
-              نام <span style={{ color: "red" }}>*</span>
-            </label>
+            <label>نام <span style={{ color: "red" }}>*</span></label>
             <input
               name="name"
               value={formData.name}
@@ -68,11 +63,9 @@ const PersonalInfoStep = ({ formData, errors, setFormData, handleChange, handleG
             {errors.name && <span className="error-text">{errors.name}</span>}
           </div>
 
-          {/* ===== نام خانوادگی (الزامی) ===== */}
+          {/* نام خانوادگی */}
           <div className="form-group">
-            <label>
-              نام خانوادگی <span style={{ color: "red" }}>*</span>
-            </label>
+            <label>نام خانوادگی <span style={{ color: "red" }}>*</span></label>
             <input
               name="family"
               value={formData.family}
@@ -82,11 +75,10 @@ const PersonalInfoStep = ({ formData, errors, setFormData, handleChange, handleG
             {errors.family && <span className="error-text">{errors.family}</span>}
           </div>
 
-          {/* ===== پایه تحصیلی (الزامی) ===== */}
+          {/* پایه تحصیلی */}
           <div className="form-group">
-            <label>
-              پایه تحصیلی <span style={{ color: "red" }}>*</span>
-            </label>
+            <label>پایه تحصیلی <span style={{ color: "red" }}>*</span></label>
+
             <select
               name="grade"
               value={formData.grade}
@@ -98,43 +90,59 @@ const PersonalInfoStep = ({ formData, errors, setFormData, handleChange, handleG
             >
               <option value="">انتخاب کنید</option>
 
-              {/* 🔹 دوره ابتدایی و اول دبیرستان */}
-              <optgroup label="دوره ابتدایی و اول دبیرستان">
-                {[...Array(8)].map((_, i) => (
-                  <option key={i + 2} value={i + 2}>
-                    پایه {i + 2}
+              {/* ابتدایی */}
+              <optgroup label="ابتدایی (اول تا ششم)">
+                {gradeNames.map((title, index) => (
+                  <option key={index} value={`ابتدایی-${index + 1}`}>
+                    پایه {title}
                   </option>
                 ))}
               </optgroup>
 
-              {/* 🔹 دوره دوم دبیرستان - رشته‌های نظری */}
-              <optgroup label="دوره دوم دبیرستان - رشته‌های نظری">
-                <option value="10-ریاضی">پایه 10 ریاضی</option>
-                <option value="11-ریاضی">پایه 11 ریاضی</option>
-                <option value="12-ریاضی">پایه 12 ریاضی</option>
-                <option value="10-تجربی">پایه 10 تجربی</option>
-                <option value="11-تجربی">پایه 11 تجربی</option>
-                <option value="12-تجربی">پایه 12 تجربی</option>
-                <option value="10-انسانی">پایه 10 انسانی</option>
-                <option value="11-انسانی">پایه 11 انسانی</option>
-                <option value="12-انسانی">پایه 12 انسانی</option>
+              {/* متوسطه اول */}
+              <optgroup label="متوسطه اول (هفتم تا نهم)">
+                <option value="متوسطه اول-7">پایه هفتم</option>
+                <option value="متوسطه اول-8">پایه هشتم</option>
+                <option value="متوسطه اول-9">پایه نهم</option>
               </optgroup>
 
-              {/* 🔹 هنرستان (افزوده جدید) */}
-              <optgroup label="دوره دوم دبیرستان - هنرستان">
-                <option value="10-هنرستان">پایه 10 هنرستان</option>
-                <option value="11-هنرستان">پایه 11 هنرستان</option>
-                <option value="12-هنرستان">پایه 12 هنرستان</option>
+              {/* متوسطه دوم - نظری */}
+              <optgroup label="متوسطه دوم - رشته‌های نظری">
+                <option value="10-ریاضی">پایه ۱۰ ریاضی</option>
+                <option value="11-ریاضی">پایه ۱۱ ریاضی</option>
+                <option value="12-ریاضی">پایه ۱۲ ریاضی</option>
+
+                <option value="10-تجربی">پایه ۱۰ تجربی</option>
+                <option value="11-تجربی">پایه ۱۱ تجربی</option>
+                <option value="12-تجربی">پایه ۱۲ تجربی</option>
+
+                <option value="10-انسانی">پایه ۱۰ انسانی</option>
+                <option value="11-انسانی">پایه ۱۱ انسانی</option>
+                <option value="12-انسانی">پایه ۱۲ انسانی</option>
               </optgroup>
+
+              {/* هنرستان */}
+              <optgroup label="متوسطه دوم - هنرستان">
+                <option value="10-هنرستان">پایه ۱۰ هنرستان</option>
+                <option value="11-هنرستان">پایه ۱۱ هنرستان</option>
+                <option value="12-هنرستان">پایه ۱۲ هنرستان</option>
+              </optgroup>
+
+              {/* زبان / هنر / زبان‌ـ‌هنر */}
+              <optgroup label="رشته‌های جانبی">
+                <option value="زبان">زبان</option>
+                <option value="هنر">هنر</option>
+                <option value="زبان-هنر">زبان‌ـ‌هنر</option>
+              </optgroup>
+
             </select>
+
             {errors.grade && <span className="error-text">{errors.grade}</span>}
           </div>
 
-          {/* ===== جنسیت (الزامی) ===== */}
+          {/* جنسیت */}
           <div className="form-group">
-            <label>
-              جنسیت <span style={{ color: "red" }}>*</span>
-            </label>
+            <label>جنسیت <span style={{ color: "red" }}>*</span></label>
             <select
               name="gender"
               value={formData.gender}
@@ -148,11 +156,9 @@ const PersonalInfoStep = ({ formData, errors, setFormData, handleChange, handleG
             {errors.gender && <span className="error-text">{errors.gender}</span>}
           </div>
 
-          {/* ===== تلفن دانش‌آموز (الزامی) ===== */}
+          {/* تلفن دانش آموز */}
           <div className="form-group">
-            <label>
-              تلفن دانش‌آموز <span style={{ color: "red" }}>*</span>
-            </label>
+            <label>تلفن دانش‌آموز <span style={{ color: "red" }}>*</span></label>
             <input
               name="phone1"
               value={formData.phone1}
@@ -163,51 +169,36 @@ const PersonalInfoStep = ({ formData, errors, setFormData, handleChange, handleG
             {errors.phone1 && <span className="error-text">{errors.phone1}</span>}
           </div>
 
-          {/* ===== تلفن ۲ (اختیاری) ===== */}
-          <div className="form-group">
-            <label>تلفن ۲ (اختیاری)</label>
-            <input
-              name="phone2"
-              value={formData.phone2}
-              onChange={handleChange}
-              placeholder="اختیاری"
-            />
-          </div>
-
-          {/* ===== تلفن مادر (اختیاری) ===== */}
-          <div className="form-group">
-            <label>تلفن مادر (اختیاری)</label>
-            <input
-              name="motherPhone"
-              value={formData.motherPhone}
-              onChange={handleChange}
-              placeholder="09..."
-            />
-          </div>
-
-          {/* ===== تلفن منزل (اختیاری) ===== */}
+          {/* تلفن دوم */}
           <div className="form-group">
             <label>تلفن منزل (اختیاری)</label>
-            <input
-              name="homePhone"
-              value={formData.homePhone}
-              onChange={handleChange}
-              placeholder="شماره ثابت"
-            />
+            <input name="phone2" value={formData.phone2} onChange={handleChange} />
           </div>
 
-          {/* ===== مدرسه (اختیاری) ===== */}
+          {/* تلفن مادر */}
+          <div className="form-group">
+            <label>تلفن مادر (اختیاری)</label>
+            <input name="motherPhone" value={formData.motherPhone} onChange={handleChange} />
+          </div>
+
+          {/* تلفن منزل */}
+          <div className="form-group">
+            <label>تلفن منزل (اختیاری)</label>
+            <input name="homePhone" value={formData.homePhone} onChange={handleChange} />
+          </div>
+
+          {/* مدرسه */}
           <div className="form-group">
             <label>مدرسه (اختیاری)</label>
             <input
               name="school"
               value={formData.school}
               onChange={handleChange}
-              placeholder="نام مدرسه (اختیاری)"
+              placeholder="نام مدرسه"
             />
           </div>
 
-          {/* ===== معدل (اختیاری، عدد یا توصیفی) ===== */}
+          {/* معدل */}
           <div className="form-group">
             <label>معدل (اختیاری)</label>
             <input
@@ -219,11 +210,9 @@ const PersonalInfoStep = ({ formData, errors, setFormData, handleChange, handleG
             />
           </div>
 
-          {/* ===== کد ملی (الزامی + ۱۰ رقمی) ===== */}
+          {/* کد ملی */}
           <div className="form-group">
-            <label>
-              کد ملی <span style={{ color: "red" }}>*</span>
-            </label>
+            <label>کد ملی <span style={{ color: "red" }}>*</span></label>
             <input
               name="nationalCode"
               value={formData.nationalCode}
@@ -235,6 +224,7 @@ const PersonalInfoStep = ({ formData, errors, setFormData, handleChange, handleG
               <span className="error-text">{errors.nationalCode}</span>
             )}
           </div>
+
         </div>
       </form>
     </>

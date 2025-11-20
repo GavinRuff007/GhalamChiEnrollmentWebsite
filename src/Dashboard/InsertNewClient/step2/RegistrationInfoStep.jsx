@@ -5,14 +5,6 @@ const RegistrationInfoStep = ({
   setTypeOption,
   examCount,
   setExamCount,
-  examFeeOption,
-  setExamFeeOption,
-  customExamFee,
-  setCustomExamFee,
-  bookFeeOption,
-  setBookFeeOption,
-  customBookFee,
-  setCustomBookFee,
   discountExam,
   setDiscountExam,
   discountClass,
@@ -24,26 +16,10 @@ const RegistrationInfoStep = ({
   errors,
   specialSupport,
   setSpecialSupport,
-  summerSupportFeeOption,
-  setSummerSupportFeeOption,
-  summerSupportFee,
-  setSummerSupportFee,
-  fallSupportFeeOption,
-  setFallSupportFeeOption,
-  fallSupportFee,
-  setFallSupportFee,
-  winterSupportFeeOption,
-  setWinterSupportFeeOption,
-  winterSupportFee,
-  setWinterSupportFee,
-  springSupportFeeOption,
-  setSpringSupportFeeOption,
-  springSupportFee,
-  setSpringSupportFee,
-  discountSupport,
-  setDiscountSupport,
   formData,
   handleChange,
+  bookVoucher,      // مقدار بن کتاب
+  setBookVoucher,   // setter برای بن کتاب
 }) => {
   return (
     <div className="next-page">
@@ -62,15 +38,14 @@ const RegistrationInfoStep = ({
                 setTypeOption(value);
                 if (["1", "2", "3", "4"].includes(value)) {
                   setExamCount("none");
-                  setExamFeeOption("0");
                 } else {
                   setExamCount("");
-                  setExamFeeOption("");
                 }
               }}
               className={errors.typeOption ? "error" : ""}
             >
               <option value="">انتخاب کنید</option>
+              <option value="هیچکدام">هیچکدام</option>
               <option value="1">1کلاس</option>
               <option value="2">2کلاس</option>
               <option value="3">3کلاس</option>
@@ -102,8 +77,6 @@ const RegistrationInfoStep = ({
               ))}
               <option value="custom">وارد کردن دستی</option>
             </select>
-
-            {/* نمایش ورودی دستی برای وارد کردن نام مسئول جذب */}
             {formData.recruiter === "custom" && (
               <input
                 type="text"
@@ -125,7 +98,7 @@ const RegistrationInfoStep = ({
             <select
               value={examCount}
               onChange={(e) => setExamCount(e.target.value)}
-              disabled={["1", "2", "3", "4"].includes(typeOption)}
+              disabled={["1", "2", "3", "4", "هیچکدام"].includes(typeOption)}
               className={errors.examCount ? "error" : ""}
             >
               <option value="">انتخاب کنید</option>
@@ -141,83 +114,20 @@ const RegistrationInfoStep = ({
             )}
           </div>
 
-          {/* ===== شهریه یک آزمون ===== */}
+          {/* ===== بن کتاب ===== */}
           <div className="form-group">
-            <label>
-              شهریه یک آزمون <span style={{ color: "red" }}>*</span>
-            </label>
+            <label>بن کتاب</label>
             <select
-              value={examCount === "none" ? "0" : examFeeOption}
-              disabled={examCount === "none"}
-              onChange={(e) => setExamFeeOption(e.target.value)}
-              className={errors.examFeeOption ? "error" : ""}
-            >
-              {examCount === "none" ? (
-                <option value="0">0 تومان</option>
-              ) : (
-                <>
-                  <option value="">انتخاب کنید</option>
-                  <option value="100000">100٬000 تومان</option>
-                  <option value="200000">200٬000 تومان</option>
-                  <option value="300000">300٬000 تومان</option>
-                  <option value="custom">انتخاب مقدار دلخواه</option>
-                </>
-              )}
-            </select>
-            {examFeeOption === "custom" && examCount !== "none" && (
-              <input
-                type="text"
-                placeholder="مقدار دلخواه (تومان)"
-                value={
-                  customExamFee
-                    ? customExamFee.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                    : ""
-                }
-                onChange={(e) => {
-                  const rawValue = e.target.value
-                    .replace(/,/g, "")
-                    .replace(/\D/g, "");
-                  setCustomExamFee(rawValue);
-                }}
-                style={{ marginTop: "8px" }}
-              />
-            )}
-            {errors.examFeeOption && (
-              <span className="error-text">{errors.examFeeOption}</span>
-            )}
-          </div>
-
-          {/* ===== شهریه کتاب ===== */}
-          <div className="form-group">
-            <label>شهریه کتاب</label>
-            <select
-              value={bookFeeOption}
-              onChange={(e) => setBookFeeOption(e.target.value)}
+              value={bookVoucher || ""}
+              onChange={(e) => setBookVoucher(e.target.value)}
+              className={errors.bookVoucher ? "error" : ""}
             >
               <option value="">انتخاب کنید</option>
-              <option value="50000">50٬000 تومان</option>
-              <option value="100000">100٬000 تومان</option>
-              <option value="150000">150٬000 تومان</option>
-              <option value="custom">انتخاب مقدار دلخواه</option>
+              <option value="بله">بله</option>
+              <option value="خیر">خیر</option>
             </select>
-
-            {bookFeeOption === "custom" && (
-              <input
-                type="text"
-                placeholder="مقدار دلخواه (تومان)"
-                value={
-                  customBookFee
-                    ? customBookFee.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                    : ""
-                }
-                onChange={(e) => {
-                  const rawValue = e.target.value
-                    .replace(/,/g, "")
-                    .replace(/\D/g, "");
-                  setCustomBookFee(rawValue);
-                }}
-                style={{ marginTop: "8px" }}
-              />
+            {errors.bookVoucher && (
+              <span className="error-text">{errors.bookVoucher}</span>
             )}
           </div>
 
