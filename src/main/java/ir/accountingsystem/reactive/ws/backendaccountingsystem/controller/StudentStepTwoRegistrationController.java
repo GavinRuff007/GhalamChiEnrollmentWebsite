@@ -9,7 +9,14 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/register/step2")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
+@CrossOrigin(
+        origins = {
+                "http://localhost:3000",
+                "http://217.182.185.198:2025",
+                "http://217.182.185.198",
+        },
+        allowCredentials = "true"
+)
 public class StudentStepTwoRegistrationController {
 
     private final StudentStepTwoRegistrationService service;
