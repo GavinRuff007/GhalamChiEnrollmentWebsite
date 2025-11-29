@@ -37,11 +37,10 @@ public class AuthController {
         String refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(false)                // http هست
-                .sameSite("Lax")              // ❗ اجبار مرورگر، None روی HTTP جواب نمی‌دهد
-                .domain("217.182.185.198")    // حتماً قرار بده
+                .secure(false)
                 .path("/")
-                .maxAge(7 * 24 * 3600)
+                .maxAge(7 * 24 * 60 * 60)
+                .sameSite("Lax")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         System.out.println("✅ Cookie Set: " + cookie.toString());
@@ -56,43 +55,27 @@ public class AuthController {
     }
 
     @PostMapping("/refresh-check")
-    public ResponseEntity<?> checkRefreshToken(
-            @CookieValue(value = "refreshToken", required = false) String refreshToken) {
-
+    public ResponseEntity<?> checkRefreshToken(@CookieValue(value = "refreshToken", required = false) String refreshToken) {
         if (refreshToken == null) {
             return ResponseEntity.status(401).body(Map.of(
                     "state", "invalid",
                     "message", "No refresh token found"
             ));
         }
-
-        // بررسی اعتبار Refresh Token
         if (!jwtTokenProvider.validateToken(refreshToken)) {
             return ResponseEntity.status(401).body(Map.of(
                     "state", "invalid",
                     "message", "Refresh token invalid or expired"
             ));
         }
-
-        // استخراج نام کاربری از RefreshToken
         String username = jwtTokenProvider.getUsername(refreshToken);
-
         UserModel userModel = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
-        List<String> roles = userModel.getRoleModels()
-                .stream().map(RoleModel::getName).toList();
-
-        // 🟢 ساخت Access Token جدید
-        String newAccessToken = jwtTokenProvider.generateTokenFromUsername(username, roles);
-
-        // 🔥 خروجی جدید شامل AccessToken تازه ساخته‌شده
+        List<String> roles = userModel.getRoleModels().stream().map(RoleModel::getName).toList();
         return ResponseEntity.ok(Map.of(
                 "state", "ok",
-                "accessToken", newAccessToken,
                 "roles", roles
         ));
     }
-
 
 }

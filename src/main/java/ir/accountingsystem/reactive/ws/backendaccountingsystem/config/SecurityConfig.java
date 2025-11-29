@@ -35,19 +35,20 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/fees/**").permitAll()
                         .requestMatchers("/api/support/**").permitAll()
-                        .requestMatchers("/api/").permitAll()
-                        .requestMatchers("/api/classes/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER")
-                        .requestMatchers("/api/register/step1/**").hasAnyAuthority("ROLE_ADMIN", "ROLE_USER")
+                        .requestMatchers("/api/fees/**").permitAll()
+
+                        // 🔥 مسیرهای اصلی که نیاز به login دارند
+                        .requestMatchers("/api/register/**").authenticated()
+                        .requestMatchers("/api/classes/**").authenticated()
+                        .requestMatchers("/api/user/**").authenticated()
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
-                        .requestMatchers("/api/user/**").hasAnyAuthority("ROLE_ADMIN","ROLE_USER")
-                        .anyRequest().authenticated()
-                )
-                .sessionManagement(sess ->
-                        sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+
+                        // 🔥 بقیه مسیرها
+                        .anyRequest().permitAll()
                 )
                 .addFilterBefore(new JwtAuthFilter(jwtTokenProvider, userDetailsService),
                         UsernamePasswordAuthenticationFilter.class);
@@ -56,23 +57,22 @@ public class SecurityConfig {
     }
 
 
+
     // 🔥 CORS صحیح (تنها قسمتی که واقعا اجرا می‌شود)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-
-        config.addAllowedOrigin("http://localhost:3000");
-        config.addAllowedOrigin("http://217.182.185.198:2025");   // دامنه یا IP سرورت
-
+        config.addAllowedOriginPattern("*"); // راحت‌ترین حالت چون روی IP هستی
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.addExposedHeader("Authorization");
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
+
         return source;
     }
+
 
 
     @Bean
