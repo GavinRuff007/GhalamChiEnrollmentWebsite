@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { calcClassFee } from "../utils/calcClassFee";
 
+
 export const useFeeCalculator = (reg, subjects, calculateFees) => {
   const [fees, setFees] = useState(null);
 
   const calcAll = useCallback(async () => {
-    if (!subjects?.length || !reg.typeOption) return;
+    if (!subjects?.length) return;
+    if (!reg) return;
 
-    const classSum = calcClassFee(reg.classInfo, subjects);
+    const classSum = calcClassFee(reg.classInfo || [], subjects);
 
     let resp;
     try {
@@ -37,9 +39,8 @@ export const useFeeCalculator = (reg, subjects, calculateFees) => {
         (reg.supportInfo?.fee || 0),
     };
 
-    setFees((prev) =>
-      JSON.stringify(prev) === JSON.stringify(newFees) ? prev : newFees
-    );
+    setFees(newFees);
+
   }, [reg, subjects, calculateFees]);
 
   useEffect(() => {

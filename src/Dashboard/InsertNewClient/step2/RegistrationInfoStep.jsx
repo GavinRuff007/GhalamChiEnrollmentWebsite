@@ -33,12 +33,11 @@ const RegistrationInfoStep = () => {
 
   const [calculateFees] = useCalculateFeesMutation();
 
-  useSupportCalculator(reg, supporters, (obj) =>
-    dispatch(updateRegistrationInfo(obj))
-  );
+  useSupportCalculator(reg, supporters, dispatch);
+
 
   const fees = useFeeCalculator(reg, subjects, calculateFees);
-  
+
   return (
     <div className="next-page">
       <h3>مرحله دوم: اطلاعات ثبت‌نام</h3>

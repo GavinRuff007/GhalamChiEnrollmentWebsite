@@ -57,8 +57,7 @@ const InsertNewClient = () => {
   // 🌟 بارگذاری اولیه از localStorage + اگر نبود API
   // ===============================================================
   useEffect(() => {
-    console.log("ACTIVE STEP =", activeStep);
-
+    
     const savedPersonal = localStorage.getItem("personalInfo");
     const savedReg = localStorage.getItem("registrationInfo");
     const savedFee = localStorage.getItem("feeInfo");
