@@ -1,0 +1,4 @@
+.form-group label span.required {
+  color: red !important;
+  font-weight: bold;
+}

@@ -3,54 +3,47 @@ import { toast } from "react-toastify";
 import { Form, Input, Button, Card } from "antd";
 import "./login.css";
 import backgroundImage from "./assets/back.jpg";
+import { useLoginMutation } from "../services/apiSlice"; // ⬅️ اضافه کن
 
 const Login = () => {
   const navigate = useNavigate();
 
-  const apiBaseUrl = process.env.REACT_APP_API_URL;
+  const [loginUser, { isLoading }] = useLoginMutation();   // ⬅️ RTK Login
 
-  const handleLogin = (values) => {
+  const handleLogin = async (values) => {
     const { username, password } = values;
 
-    fetch(`${apiBaseUrl}/api/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username, password }),
-      credentials: "include",
-    })
-      .then((res) => res.json())
-      .then((resp) => {
-        if (resp.state === "OK") {
-          toast.success("ورود با موفقیت انجام شد");
+    try {
+      // 1: فراخوانی login از طریق RTK Query
+      const resp = await loginUser({ username, password }).unwrap();
 
-          // ذخیره توکن در sessionStorage
-          sessionStorage.setItem("accessToken", resp.accessToken);
-          console.log(
-            "Access Token ذخیره شد:",
-            sessionStorage.getItem("accessToken")
-          );
+      if (resp.state !== "OK") {
+        toast.error("نام کاربری یا رمز عبور اشتباه است");
+        return;
+      }
 
-          // حذف توکن بعد از ۵ دقیقه
-          setTimeout(() => {
-            sessionStorage.removeItem("accessToken");
-            toast.info("توکن منقضی شد.");
-          }, 5 * 60 * 1000);
+      // 2: ذخیره AccessToken
+      sessionStorage.setItem("accessToken", resp.accessToken);
 
-          // انتقال به پنل مناسب
-          if (resp.roles && resp.roles.includes("ROLE_ADMIN")) {
-            navigate("/adminDashboard");
-          } else {
-            navigate("/dashboard");
-          }
-        } else {
-          toast.error("نام کاربری یا رمز عبور اشتباه است");
-        }
-      })
-      .catch((err) => {
-        toast.error("ورود ناموفق بود: " + err.message);
-      });
+      toast.success("ورود با موفقیت انجام شد");
+
+      // 3: انقضای خودکار توکن بعد از 5 دقیقه
+      setTimeout(() => {
+        sessionStorage.removeItem("accessToken");
+        toast.info("توکن منقضی شد.");
+      }, 5 * 60 * 1000);
+
+      // 4: انتقال بر اساس نقش
+      if (resp.roles?.includes("ROLE_ADMIN")) {
+        navigate("/adminDashboard");
+      } else {
+        navigate("/dashboard");
+      }
+
+    } catch (err) {
+      toast.error("خطا در ورود");
+      console.error("LOGIN ERROR:", err);
+    }
   };
 
   return (
@@ -81,7 +74,7 @@ const Login = () => {
             </Form.Item>
 
             <div className="button-group">
-              <Button type="primary" htmlType="submit" block size="large">
+              <Button type="primary" htmlType="submit" block size="large" loading={isLoading}>
                 ورود
               </Button>
 

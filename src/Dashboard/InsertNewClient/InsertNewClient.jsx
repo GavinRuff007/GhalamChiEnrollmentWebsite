@@ -1,512 +1,262 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import "./InsertNewClient.css";
-import RegistrationInfoStep from "./step2/RegistrationInfoStep.jsx";
-import PersonalInfoStep from "./step1/PersonalInfoStep.jsx";
+
+import { useSelector, useDispatch } from "react-redux";
+import {
+  setActiveStep,
+  resetForm,
+  updatePersonalInfo,
+  updateRegistrationInfo,
+  updateFeeInfo,
+  setErrors,
+  clearErrors,
+} from "../../slices/formSlice";
+
+import PersonalInfoStep from "./step1/PersonalInfoStep";
+import RegistrationInfoStep from "./step2/RegistrationInfoStep";
 import FeeInfoStep from "./step3/FeeInfoStep";
 import DocumentsStep from "./step4/DocumentsStep";
 
+import {
+  useSaveStep1Mutation,
+  useSaveStep2Mutation,
+  useSaveStep3Mutation,
+  useGetStep1Query,
+} from "../../services/apiSlice";
 
 const InsertNewClient = () => {
+  const dispatch = useDispatch();
 
-  // ===== مراحل فرم =====
+  const {
+    activeStep,
+    personalInfo,
+    registrationInfo,
+    feeInfo,
+    errors,
+  } = useSelector((state) => state.form);
+
   const steps = [
     { title: "اطلاعات شخص", number: 1 },
     { title: "اطلاعات ثبت‌نام", number: 2 },
     { title: "اطلاعات شهریه", number: 3 },
     { title: "مدارک مستند", number: 4 },
-    { title: "تایید ثبت نام", number: 5}
+    { title: "تایید ثبت نام", number: 5 },
   ];
 
-  // ===== Stateها =====
-  const [examCount, setExamCount] = useState("");
-  const [errors, setErrors] = useState({});
-  const [activeStep, setActiveStep] = useState(1);
-  const [specialSupport, setSpecialSupport] = useState(false);
-  const [typeOption, setTypeOption] = useState("");
-  const [classCount, setClassCount] = useState(0);
-  const [classInfo, setClassInfo] = useState([]);
-  const [gradeLevel, setGradeLevel] = useState("");
-  const [subjectList, setSubjectList] = useState([]);
-  const [installment, setInstallment] = useState("");
-  const [classInitialFee, setClassInitialFee] = useState("");
-  const [classInitialFeeForSupport, setClassInitialFeeForSupport] = useState("");
-  const [installmentSupport, setInstallmentSupport] = useState("");
-  const [installments, setInstallments] = useState([]);
-  const [installmentCount, setInstallmentCount] = useState("");
-  const [installmentCountSupport, setInstallmentCountSupport] = useState("");
-  const [supportInstallments, setSupportInstallments] = useState([]);
-  const [discountExam, setDiscountExam] = useState("");
-  const [discountClass, setDiscountClass] = useState("");
-  const [summerSupportFeeOption, setSummerSupportFeeOption] = useState("");
-  const [summerSupportFee, setSummerSupportFee] = useState("");
-  const [fallSupportFeeOption, setFallSupportFeeOption] = useState("");
-  const [fallSupportFee, setFallSupportFee] = useState("");
-  const [winterSupportFeeOption, setWinterSupportFeeOption] = useState("");
-  const [winterSupportFee, setWinterSupportFee] = useState("");
-  const [springSupportFeeOption, setSpringSupportFeeOption] = useState("");
-  const [springSupportFee, setSpringSupportFee] = useState("");
-  const [discountSupport, setDiscountSupport] = useState("");
-  const [examFeeOption, setExamFeeOption] = useState("");
-  const [customExamFee, setCustomExamFee] = useState("");
-  const [bookFeeOption, setBookFeeOption] = useState("");
-  const [customBookFee, setCustomBookFee] = useState("");
-  const [uploadedFiles, setUploadedFiles] = useState([]);
+  // --------------------- API HOOKS ------------------------
+  const [saveStep1] = useSaveStep1Mutation();
+  const [saveStep2] = useSaveStep2Mutation();
+  const [saveStep3] = useSaveStep3Mutation();
 
-  const [formData, setFormData] = useState({
-    code: "",
-    date: "",
-    name: "",
-    family: "",
-    grade: "",
-    gender: "",
-    phone1: "",
-    phone2: "",
-    motherPhone: "",
-    homePhone: "",
-    school: "",
-    avg: "",
-    nationalCode: "",
-  })
+  const { data: serverStep1 } = useGetStep1Query(
+    personalInfo.nationalCode,
+    { skip: !personalInfo.nationalCode } // بدون کد ملی API نزن
+  );
 
-  // ===== محاسبه تعداد کلاس‌ها =====
+  // ===============================================================
+  // 🌟 بارگذاری اولیه از localStorage + اگر نبود API
+  // ===============================================================
   useEffect(() => {
-    const match = typeOption.match(/^(\d)/);
-    const count = match ? parseInt(match[1]) : 0;
-    setClassCount(count);
-    const updated = Array.from({ length: count }, (_, i) => classInfo[i] || {});
-    setClassInfo(updated);
-  }, [typeOption]);
+    console.log("ACTIVE STEP =", activeStep);
 
-  // ===== تغییر اطلاعات کلاس =====
-  const handleClassChange = (index, field, value) => {
-    const updated = [...classInfo];
-    if (!updated[index]) updated[index] = {};
-    updated[index][field] = value;
-    setClassInfo(updated);
-  };
+    const savedPersonal = localStorage.getItem("personalInfo");
+    const savedReg = localStorage.getItem("registrationInfo");
+    const savedFee = localStorage.getItem("feeInfo");
 
-  // ===== تغییر پایه =====
-  const handleGradeChange = (gradeValue) => {
-    setGradeLevel(gradeValue);
+    if (savedPersonal) dispatch(updatePersonalInfo(JSON.parse(savedPersonal)));
+    if (savedReg) dispatch(updateRegistrationInfo(JSON.parse(savedReg)));
+    if (savedFee) dispatch(updateFeeInfo(JSON.parse(savedFee)));
+  }, [dispatch]);
 
-    if (!isNaN(gradeValue) && gradeValue >= 2 && gradeValue <= 9) {
-      setSubjectList(["ریاضی", "علوم", "ادبیات"]);
-    } else if (
-      gradeValue.startsWith("10") ||
-      gradeValue.startsWith("11") ||
-      gradeValue.startsWith("12")
-    ) {
-      if (gradeValue.includes("ریاضی"))
-        setSubjectList(["حسابان", "فیزیک", "شیمی", "هندسه"]);
-      else if (gradeValue.includes("تجربی"))
-        setSubjectList(["زیست‌شناسی", "فیزیک", "شیمی", "ریاضی"]);
-      else if (gradeValue.includes("انسانی"))
-        setSubjectList(["فلسفه", "تاریخ", "جامعه‌شناسی", "ادبیات تخصصی"]);
-    } else {
-      setSubjectList([]);
+  // اگر از API step1 آمد → Redux + localStorage را پر کن
+  useEffect(() => {
+    if (serverStep1) {
+      dispatch(updatePersonalInfo(serverStep1));
+      localStorage.setItem("personalInfo", JSON.stringify(serverStep1));
     }
-  };
+  }, [serverStep1, dispatch]);
 
-  const validateStep3 = () => {
-  const newErrors = {};
+  // ===============================================================
+  // دکمه "بعدی"
+  // ===============================================================
+  const handleNext = async () => {
+    let newErrors = {};
 
-  if (!installment) {
-    newErrors.installment = "لطفاً وضعیت قسط‌بندی آزمون و کلاس را مشخص کنید.";
-  }
-
-  if (specialSupport) {
-    if (!installmentSupport) {
-      newErrors.installmentSupport = "لطفاً وضعیت قسط‌بندی پشتیبانی را انتخاب کنید";
-      }
-  }
-
-
-  if (installment === "بله") {
-    if (!installmentCount || installmentCount <= 0) {
-      newErrors.installmentCount = "تعداد اقساط آزمون و کلاس را وارد کنید.";
-    } else {
-      installments.forEach((inst, i) => {
-        if (!inst.feeOption && !inst.customFee)
-          newErrors[`installment_fee_${i}`] = `مبلغ قسط ${i + 1} را وارد کنید.`;
-        if (!inst.date)
-          newErrors[`installment_date_${i}`] = `تاریخ قسط ${i + 1} را مشخص کنید.`;
-      });
-    }
-  }
-
-  if (specialSupport && installmentSupport === "بله") {
-    if (!installmentCountSupport || installmentCountSupport <= 0) {
-      newErrors.installmentCountSupport = "تعداد اقساط پشتیبانی ویژه را وارد کنید.";
-    } else {
-      supportInstallments.forEach((inst, i) => {
-        if (!inst.feeOption && !inst.customFee)
-          newErrors[`support_fee_${i}`] = `مبلغ قسط پشتیبانی ${i + 1} را وارد کنید.`;
-        if (!inst.date)
-          newErrors[`support_date_${i}`] = `تاریخ قسط پشتیبانی ${i + 1} را مشخص کنید.`;
-      });
-    }
-  }
-
-  setErrors(newErrors);
-  return Object.keys(newErrors).length === 0;
-};
-
-
-  // ===== تغییر مقادیر فرم =====
-  const handleChange = (e) =>
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-
-  // ===== ریست فرم =====
-  const handleReset = () => {
-  if (activeStep === 1) {
-    // 🔹 مرحله اول: اطلاعات شخصی
-    setFormData({
-      code: "",
-      date: "",
-      name: "",
-      family: "",
-      grade: "",
-      gender: "",
-      phone1: "",
-      phone2: "",
-      motherPhone: "",
-      homePhone: "",
-      school: "",
-      avg: "",
-      nationalCode: "",
-    });
-  } 
-  
-  else if (activeStep === 2) {
-    // 🔹 مرحله دوم: اطلاعات ثبت‌نام
-    setTypeOption("");
-    setExamCount("");
-    setExamFeeOption("");
-    setCustomExamFee("");
-    setBookFeeOption("");
-    setCustomBookFee("");
-    setClassCount(0);
-    setClassInfo([]);
-    setSpecialSupport(false);
-    setErrors({});
-  } 
-  
-  else if (activeStep === 3) {
-    // 🔹 مرحله سوم: اطلاعات شهریه
-    setClassInitialFee("");
-    setInstallment("");
-    setInstallmentCount("");
-    setInstallments([]);
-    setClassInitialFeeForSupport("");
-    setInstallmentSupport("");
-    setInstallmentCountSupport("");
-    setSupportInstallments([]);
-    setErrors({});
-  }
-
-  // پیام بازخورد (اختیاری)
-  alert("اطلاعات این مرحله پاک شد ✅");
-};
-
-
-// ===== جابه‌جایی مراحل =====
-const handleNext = () => {
-  let newErrors = {};
-
-  // ============================
-  // 🔹 مرحله اول: اطلاعات شخصی
-  // ============================
-  if (activeStep === 1) {
-    const requiredFields = [
-        "code",
-        "date",
-        "name",
-        "family",
-        "grade",
-        "gender",
-        "phone1",
-        "nationalCode",
+    // ------------------- Step 1 -------------------
+    if (activeStep === 1) {
+      const required = [
+        "code", "date", "name", "family",
+        "grade", "gender", "phone1", "nationalCode",
       ];
 
-    requiredFields.forEach((field) => {
-      if (!formData[field] || formData[field].trim() === "") {
-        newErrors[field] = "باید پر کنی";
-      }
-    });
-
-    if (!/^\d{10}$/.test(formData.nationalCode)) {
-      newErrors.nationalCode = "کد ملی باید دقیقاً ۱۰ رقم عددی باشد";
-    }
-
-    setErrors(newErrors);
-
-    if (Object.keys(newErrors).length > 0) {
-      alert("لطفاً فیلدهای قرمز را پر کنید");
-      return;
-    }
-  }
-
-  // ============================
-  // 🔹 مرحله دوم: اطلاعات ثبت‌نام
-  // ============================
-  if (activeStep === 2) {
-    newErrors = {};
-
-    // فیلدهای پایه
-    if (!typeOption) newErrors.typeOption = "باید پر کنی";
-    if (!examCount) newErrors.examCount = "باید پر کنی";
-
-    // اگر آزمون دارد (یعنی examCount !== "none")، باید شهریه آزمون مشخص باشد
-    if (examCount !== "none" && !examFeeOption) {
-      newErrors.examFeeOption = "لطفاً شهریه یک آزمون را انتخاب کنید";
-    }
-
-    // اگر مقدار دلخواه انتخاب شده ولی عددی وارد نشده باشد
-    if (examFeeOption === "custom" && !customExamFee) {
-      newErrors.customExamFee = "لطفاً مبلغ دلخواه را وارد کنید";
-    }
-
-    // 🔹 بررسی کلاس‌ها (در صورت وجود)
-    if (classCount > 0) {
-      classInfo.forEach((cls, index) => {
-        if (!cls.name || cls.name.trim() === "")
-          newErrors[`class_name_${index}`] = "نام کلاس را وارد کن";
-        if (!cls.feeOption)
-          newErrors[`class_fee_${index}`] = "شهریه کلاس را انتخاب کن";
-        if (cls.feeOption === "custom" && !cls.customFee)
-          newErrors[`class_fee_${index}`] = "مقدار دلخواه را وارد کن";
+      required.forEach((f) => {
+        if (!personalInfo[f] || personalInfo[f].trim() === "") {
+          newErrors[f] = "پر کردن الزامی است";
+        }
       });
-    }
 
-    setErrors(newErrors);
+      if (!/^\d{10}$/.test(personalInfo.nationalCode)) {
+        newErrors.nationalCode = "کد ملی باید ۱۰ رقم باشد";
+      }
 
-    if (Object.keys(newErrors).length > 0) {
-      alert("لطفاً فیلدهای قرمز را پر کنید");
+      dispatch(setErrors(newErrors));
+      if (Object.keys(newErrors).length > 0) return;
+
+      localStorage.setItem("personalInfo", JSON.stringify(personalInfo));
+
+      // 🎯 ارسال به سرور
+      try {
+        await saveStep1(personalInfo).unwrap();
+      } catch (err) {
+        console.error("❌ Error saving step1:", err);
+        alert("خطا در ذخیره اطلاعات مرحله اول");
+        return;
+      }
+
+      dispatch(clearErrors());
+      dispatch(setActiveStep(2));
       return;
     }
-  }
 
-  // ============================
-  // 🔹 مرحله سوم: اطلاعات شهریه
-  // ============================
-  if (activeStep === 3) {
-    if (!validateStep3()) {
-      alert("لطفاً تمام فیلدهای الزامی در مرحله سوم را تکمیل کنید.");
-      return;
-    }
-  }
+    // ------------------- Step 2 -------------------
+    if (activeStep === 2) {
+      const { typeOption, examCount } = registrationInfo;
 
-  // ============================
-  // 🔹 جابه‌جایی بین مراحل
-  // ============================
-  setErrors({});
-  setActiveStep((prev) => Math.min(prev + 1, steps.length));
+      if (!typeOption) newErrors.typeOption = "نوع انتخاب نشده";
+      if (!examCount) newErrors.examCount = "تعداد آزمون لازم است";
+
+      dispatch(setErrors(newErrors));
+      if (Object.keys(newErrors).length > 0) return;
+
+      localStorage.setItem("registrationInfo", JSON.stringify(registrationInfo));
+      console.log("SENDING STEP2:", registrationInfo);
+
+      const payload = {
+  nationalCode: personalInfo.nationalCode,
+
+  typeOption: registrationInfo.typeOption,
+  recruiter: registrationInfo.recruiter,
+
+  examCount: registrationInfo.examCount,
+  bookVoucher: registrationInfo.bookVoucher,
+
+  discountExam: Number(registrationInfo.discountExam) || 0,
+  discountClass: Number(registrationInfo.discountClass) || 0,
+
+  classCount: registrationInfo.classCount,
+
+  specialSupport: registrationInfo.specialSupport,
+
+  supporterId: registrationInfo.supportInfo?.supporterId || null,
+  supportStart: registrationInfo.supportInfo?.startDate || null,
+  supportEnd: registrationInfo.supportInfo?.endDate || null,
+  supportDays: registrationInfo.supportInfo?.days || 0,
+  supportDailyPrice: registrationInfo.supportInfo?.dailyPrice || 0,
+  supportFee: registrationInfo.supportInfo?.fee || 0,
 };
 
 
+try {
+  await saveStep2(payload).unwrap();
+} catch (err) {
+  console.error("❌ Error saving step2:", err);
+  alert("خطا در ذخیره اطلاعات مرحله دوم");
+  return;
+}
 
-  const handleBack = () => {
-    if (activeStep > 1) setActiveStep(activeStep - 1);
+
+      dispatch(clearErrors());
+      dispatch(setActiveStep(3));
+      return;
+    }
+
+    // ------------------- Step 3 -------------------
+    if (activeStep === 3) {
+      const { installment, installmentCount } = feeInfo;
+
+      if (!installment) newErrors.installment = "انتخاب الزامی است";
+      if (installment === "بله" && (!installmentCount || installmentCount <= 0)) {
+        newErrors.installmentCount = "تعداد اقساط لازم است";
+      }
+
+      dispatch(setErrors(newErrors));
+      if (Object.keys(newErrors).length > 0) return;
+
+      localStorage.setItem("feeInfo", JSON.stringify(feeInfo));
+
+      try {
+        await saveStep3(feeInfo).unwrap();
+      } catch (err) {
+        console.error("❌ Error saving step3:", err);
+        alert("خطا در ذخیره اطلاعات مرحله شهریه");
+        return;
+      }
+
+      dispatch(clearErrors());
+      dispatch(setActiveStep(4));
+      return;
+    }
+
+    // ------------------- Step 4 → نهایی -------------------
+    if (activeStep === 4) {
+      dispatch(setActiveStep(5));
+      return;
+    }
   };
 
-  // ============================================================
-  //                     ساختار صفحه
-  // ============================================================
+  // ===============================================================
+  // دکمه "برگشت"
+  // ===============================================================
+  const handleBack = () => {
+    if (activeStep > 1) dispatch(setActiveStep(activeStep - 1));
+  };
+
+  // ===============================================================
+  // دکمه "ریست"
+  // ===============================================================
+  const handleReset = () => {
+    dispatch(resetForm());
+
+    localStorage.removeItem("personalInfo");
+    localStorage.removeItem("registrationInfo");
+    localStorage.removeItem("feeInfo");
+
+    alert("فرم پاک شد");
+  };
+
   return (
     <div className="dashboard-home">
-      {/* ===== هدر شامل دایره‌ها ===== */}
+
       <header className="dashboard-header">
         <div className="process-container">
-          {steps.map((step, index) => (
-            <div key={index} className="process-step">
-              <div
-                className={`circle ${
-                  step.number <= activeStep ? "active" : ""
-                }`}
-              >
+          {steps.map((step, i) => (
+            <div key={i} className="process-step">
+              <div className={`circle ${step.number <= activeStep ? "active" : ""}`}>
                 {step.number}
               </div>
               <div className="label">{step.title}</div>
-              {index < steps.length - 1 && <div className="line"></div>}
+              {i < steps.length - 1 && <div className="line" />}
             </div>
           ))}
         </div>
       </header>
 
-      {/* ===== محتوای هر مرحله ===== */}
       <main className="dashboard-content">
-      {/* ================== مرحله اول ================== */}
-      {activeStep === 1 && (
-        <PersonalInfoStep
-          formData={formData}
-          errors={errors}
-          setFormData={setFormData}
-          handleChange={handleChange}
-          handleGradeChange={handleGradeChange}
-        />
-      )}
-
-      {/* ================== مرحله دوم ================== */}
-      {activeStep === 2 && (
-        <RegistrationInfoStep
-          typeOption={typeOption}
-          setTypeOption={setTypeOption}
-          examCount={examCount}
-          setExamCount={setExamCount}
-          examFeeOption={examFeeOption}
-          setExamFeeOption={setExamFeeOption}
-          customExamFee={customExamFee}
-          setCustomExamFee={setCustomExamFee}
-          bookFeeOption={bookFeeOption}
-          setBookFeeOption={setBookFeeOption}
-          customBookFee={customBookFee}
-          setCustomBookFee={setCustomBookFee}
-          discountExam={discountExam}
-          setDiscountExam={setDiscountExam}
-          discountClass={discountClass}
-          setDiscountClass={setDiscountClass}
-          classCount={classCount}
-          classInfo={classInfo}
-          handleClassChange={handleClassChange}
-          subjectList={subjectList}
-          errors={errors}
-          specialSupport={specialSupport}
-          setSpecialSupport={setSpecialSupport}
-          summerSupportFeeOption={summerSupportFeeOption}
-          setSummerSupportFeeOption={setSummerSupportFeeOption}
-          summerSupportFee={summerSupportFee}
-          setSummerSupportFee={setSummerSupportFee}
-          fallSupportFeeOption={fallSupportFeeOption}
-          setFallSupportFeeOption={setFallSupportFeeOption}
-          fallSupportFee={fallSupportFee}
-          setFallSupportFee={setFallSupportFee}
-          winterSupportFeeOption={winterSupportFeeOption}
-          setWinterSupportFeeOption={setWinterSupportFeeOption}
-          winterSupportFee={winterSupportFee}
-          setWinterSupportFee={setWinterSupportFee}
-          springSupportFeeOption={springSupportFeeOption}
-          setSpringSupportFeeOption={setSpringSupportFeeOption}
-          springSupportFee={springSupportFee}
-          setSpringSupportFee={setSpringSupportFee}
-          discountSupport={discountSupport}
-          setDiscountSupport={setDiscountSupport}
-          formData={formData}
-          handleChange={handleChange}
-        />
-      )}
-
-
-
-
-      {/* ================== مرحله سوم ================== */}
-      {activeStep === 3 && (
-      <FeeInfoStep
-        errors={errors}
-        installment={installment}
-        setInstallment={setInstallment}
-        classInitialFee={classInitialFee}
-        setClassInitialFee={setClassInitialFee}
-        installmentCount={installmentCount}
-        setInstallmentCount={setInstallmentCount}
-        installments={installments}
-        setInstallments={setInstallments}
-        specialSupport={specialSupport}
-        installmentSupport={installmentSupport}
-        setInstallmentSupport={setInstallmentSupport}
-        classInitialFeeForSupport={classInitialFeeForSupport}
-        setClassInitialFeeForSupport={setClassInitialFeeForSupport}
-        installmentCountSupport={installmentCountSupport}
-        setInstallmentCountSupport={setInstallmentCountSupport}
-        supportInstallments={supportInstallments}
-        setSupportInstallments={setSupportInstallments}
-      />
-    )}
-
-
-        {/* ================== مرحله چهارم ================== */}
-        {activeStep === 4 && (
-          <DocumentsStep
-            uploadedFiles={uploadedFiles}
-            setUploadedFiles={setUploadedFiles}
-          />
-        )}
-
+        {activeStep === 1 && <PersonalInfoStep errors={errors} />}
+        {activeStep === 2 && <RegistrationInfoStep errors={errors} />}
+        {activeStep === 3 && <FeeInfoStep errors={errors} />}
+        {activeStep === 4 && <DocumentsStep />}
+        {activeStep === 5 && <h1>✔ ثبت نهایی انجام شد</h1>}
       </main>
 
-      {/* ===== دکمه‌ها ===== */}
-<div className="button-container">
-  <button className="reset-btn" onClick={handleReset}>
-    پاک کردن همه
-  </button>
-
-  {activeStep > 1 && (
-    <button className="back-btn" onClick={handleBack}>
-      برگشت
-    </button>
-  )}
-
-  {activeStep < steps.length ? (
-    <button className="next-btn" onClick={handleNext}>
-      بعدی
-    </button>
-  ) : (
-    <button
-      className="confirm-btn"
-      style={{
-        backgroundColor: "#52c41a",
-        color: "white",
-        fontWeight: "bold",
-        padding: "10px 20px",
-        border: "none",
-        borderRadius: "8px",
-        cursor: "pointer",
-      }}
-      onClick={() => {
-        alert("✅ اطلاعات با موفقیت ثبت شد!");
-
-        // 🧹 پاک‌سازی همه داده‌ها
-        setFormData({
-          code: "",
-          date: "",
-          name: "",
-          family: "",
-          grade: "",
-          gender: "",
-          phone1: "",
-          phone2: "",
-          motherPhone: "",
-          homePhone: "",
-          school: "",
-          avg: "",
-          nationalCode: "",
-        });
-        setTypeOption("");
-        setExamCount("");
-        setExamFeeOption("");
-        setCustomExamFee("");
-        setBookFeeOption("");
-        setCustomBookFee("");
-        setClassCount(0);
-        setClassInfo([]);
-        setSpecialSupport(false);
-        setClassInitialFee("");
-        setInstallment("");
-        setInstallmentCount("");
-        setInstallments([]);
-        setClassInitialFeeForSupport("");
-        setInstallmentSupport("");
-        setInstallmentCountSupport("");
-        setSupportInstallments([]);
-        setErrors({});
-
-        setActiveStep(1);
-      }}
-    >
-      تأیید نهایی
-    </button>
-  )}
-</div>
-</div>
+      <div className="button-container">
+        <button className="reset-btn" onClick={handleReset}>ریست</button>
+        {activeStep > 1 && <button className="back-btn" onClick={handleBack}>برگشت</button>}
+        <button className="next-btn" onClick={handleNext}>
+          {activeStep < 5 ? "بعدی" : "تأیید نهایی"}
+        </button>
+      </div>
+    </div>
   );
 };
 

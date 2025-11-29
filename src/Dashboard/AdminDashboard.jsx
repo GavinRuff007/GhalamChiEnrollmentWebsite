@@ -22,7 +22,6 @@ const AdminDashboard = () => {
   const toggleTheme = () => setDarkTheme(!darkTheme);
 
   const theme = darkTheme ? "dark" : "light";
-  const menuItemStyles = { color: darkTheme ? "white" : "black" };
   const bottomButtonStyle = {
     marginRight: "8px",
     color: darkTheme ? "#fff" : "#000",
