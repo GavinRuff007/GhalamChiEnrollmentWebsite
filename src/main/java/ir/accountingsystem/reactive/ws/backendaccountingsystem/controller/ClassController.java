@@ -12,14 +12,6 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/classes")
-@CrossOrigin(
-        origins = {
-                "http://localhost:3000",
-                "http://217.182.185.198:2025",
-                "http://217.182.185.198",
-        },
-        allowCredentials = "true"
-)
 public class ClassController {
 
     private final ClassService classService;

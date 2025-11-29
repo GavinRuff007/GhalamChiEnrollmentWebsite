@@ -14,14 +14,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/fees")
 @RequiredArgsConstructor
-@CrossOrigin(
-        origins = {
-                "http://localhost:3000",
-                "http://217.182.185.198:2025",
-                "http://217.182.185.198",
-        },
-        allowCredentials = "true"
-)
+
 public class FeeController {
 
     private final FeeCalculatorService feeService;

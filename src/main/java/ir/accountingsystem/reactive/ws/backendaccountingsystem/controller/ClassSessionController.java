@@ -10,14 +10,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/sessions")
-@CrossOrigin(
-        origins = {
-                "http://localhost:3000",
-                "http://217.182.185.198:2025",
-                "http://217.182.185.198",
-        },
-        allowCredentials = "true"
-)
+
 public class ClassSessionController {
 
     private final ClassSessionService service;
