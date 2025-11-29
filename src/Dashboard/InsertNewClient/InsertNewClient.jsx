@@ -22,6 +22,7 @@ import {
   useSaveStep2Mutation,
   useSaveStep3Mutation,
   useGetStep1Query,
+  useGetStep2Query,
 } from "../../services/apiSlice";
 
 const InsertNewClient = () => {
@@ -50,14 +51,18 @@ const InsertNewClient = () => {
 
   const { data: serverStep1 } = useGetStep1Query(
     personalInfo.nationalCode,
-    { skip: !personalInfo.nationalCode } // بدون کد ملی API نزن
+    { skip: !personalInfo.nationalCode }
+  );
+
+  const { data: serverStep2 } = useGetStep2Query(
+    personalInfo.nationalCode,
+    { skip: !personalInfo.nationalCode }
   );
 
   // ===============================================================
-  // 🌟 بارگذاری اولیه از localStorage + اگر نبود API
+  // 🌟 بارگذاری اولیه از localStorage
   // ===============================================================
   useEffect(() => {
-    
     const savedPersonal = localStorage.getItem("personalInfo");
     const savedReg = localStorage.getItem("registrationInfo");
     const savedFee = localStorage.getItem("feeInfo");
@@ -67,13 +72,30 @@ const InsertNewClient = () => {
     if (savedFee) dispatch(updateFeeInfo(JSON.parse(savedFee)));
   }, [dispatch]);
 
-  // اگر از API step1 آمد → Redux + localStorage را پر کن
+  // ===============================================================
+  // 🌟 اگر Step1 از سرور آمد → پر کن
+  // ===============================================================
   useEffect(() => {
     if (serverStep1) {
       dispatch(updatePersonalInfo(serverStep1));
       localStorage.setItem("personalInfo", JSON.stringify(serverStep1));
     }
   }, [serverStep1, dispatch]);
+
+  // ===============================================================
+  // 🌟 اگر Step2 از سرور آمد → فقط در صورت نبود localStorage
+  // ===============================================================
+  useEffect(() => {
+    if (!serverStep2) return;
+
+    const savedReg = localStorage.getItem("registrationInfo");
+
+    // فقط وقتی قبلاً ذخیره نشده، با دیتا سرور مقدار بده
+    if (!savedReg) {
+      dispatch(updateRegistrationInfo(serverStep2));
+      localStorage.setItem("registrationInfo", JSON.stringify(serverStep2));
+    }
+  }, [serverStep2, dispatch]);
 
   // ===============================================================
   // دکمه "بعدی"
@@ -103,7 +125,6 @@ const InsertNewClient = () => {
 
       localStorage.setItem("personalInfo", JSON.stringify(personalInfo));
 
-      // 🎯 ارسال به سرور
       try {
         await saveStep1(personalInfo).unwrap();
       } catch (err) {
@@ -131,38 +152,30 @@ const InsertNewClient = () => {
       console.log("SENDING STEP2:", registrationInfo);
 
       const payload = {
-  nationalCode: personalInfo.nationalCode,
+        nationalCode: personalInfo.nationalCode,
+        typeOption: registrationInfo.typeOption,
+        recruiter: registrationInfo.recruiter,
+        examCount: registrationInfo.examCount,
+        bookVoucher: registrationInfo.bookVoucher,
+        discountExam: Number(registrationInfo.discountExam) || 0,
+        discountClass: Number(registrationInfo.discountClass) || 0,
+        classCount: registrationInfo.classCount,
+        specialSupport: registrationInfo.specialSupport,
+        supporterId: registrationInfo.supportInfo?.supporterId || null,
+        supportStart: registrationInfo.supportInfo?.startDate || null,
+        supportEnd: registrationInfo.supportInfo?.endDate || null,
+        supportDays: registrationInfo.supportInfo?.days || 0,
+        supportDailyPrice: registrationInfo.supportInfo?.dailyPrice || 0,
+        supportFee: registrationInfo.supportInfo?.fee || 0,
+      };
 
-  typeOption: registrationInfo.typeOption,
-  recruiter: registrationInfo.recruiter,
-
-  examCount: registrationInfo.examCount,
-  bookVoucher: registrationInfo.bookVoucher,
-
-  discountExam: Number(registrationInfo.discountExam) || 0,
-  discountClass: Number(registrationInfo.discountClass) || 0,
-
-  classCount: registrationInfo.classCount,
-
-  specialSupport: registrationInfo.specialSupport,
-
-  supporterId: registrationInfo.supportInfo?.supporterId || null,
-  supportStart: registrationInfo.supportInfo?.startDate || null,
-  supportEnd: registrationInfo.supportInfo?.endDate || null,
-  supportDays: registrationInfo.supportInfo?.days || 0,
-  supportDailyPrice: registrationInfo.supportInfo?.dailyPrice || 0,
-  supportFee: registrationInfo.supportInfo?.fee || 0,
-};
-
-
-try {
-  await saveStep2(payload).unwrap();
-} catch (err) {
-  console.error("❌ Error saving step2:", err);
-  alert("خطا در ذخیره اطلاعات مرحله دوم");
-  return;
-}
-
+      try {
+        await saveStep2(payload).unwrap();
+      } catch (err) {
+        console.error("❌ Error saving step2:", err);
+        alert("خطا در ذخیره اطلاعات مرحله دوم");
+        return;
+      }
 
       dispatch(clearErrors());
       dispatch(setActiveStep(3));
