@@ -56,27 +56,43 @@ public class AuthController {
     }
 
     @PostMapping("/refresh-check")
-    public ResponseEntity<?> checkRefreshToken(@CookieValue(value = "refreshToken", required = false) String refreshToken) {
+    public ResponseEntity<?> checkRefreshToken(
+            @CookieValue(value = "refreshToken", required = false) String refreshToken) {
+
         if (refreshToken == null) {
             return ResponseEntity.status(401).body(Map.of(
                     "state", "invalid",
                     "message", "No refresh token found"
             ));
         }
+
+        // بررسی اعتبار Refresh Token
         if (!jwtTokenProvider.validateToken(refreshToken)) {
             return ResponseEntity.status(401).body(Map.of(
                     "state", "invalid",
                     "message", "Refresh token invalid or expired"
             ));
         }
+
+        // استخراج نام کاربری از RefreshToken
         String username = jwtTokenProvider.getUsername(refreshToken);
+
         UserModel userModel = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        List<String> roles = userModel.getRoleModels().stream().map(RoleModel::getName).toList();
+
+        List<String> roles = userModel.getRoleModels()
+                .stream().map(RoleModel::getName).toList();
+
+        // 🟢 ساخت Access Token جدید
+        String newAccessToken = jwtTokenProvider.generateTokenFromUsername(username, roles);
+
+        // 🔥 خروجی جدید شامل AccessToken تازه ساخته‌شده
         return ResponseEntity.ok(Map.of(
                 "state", "ok",
+                "accessToken", newAccessToken,
                 "roles", roles
         ));
     }
+
 
 }

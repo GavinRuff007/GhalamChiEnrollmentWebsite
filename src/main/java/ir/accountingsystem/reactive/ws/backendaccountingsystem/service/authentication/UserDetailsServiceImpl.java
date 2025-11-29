@@ -1,4 +1,4 @@
-package ir.accountingsystem.reactive.ws.backendaccountingsystem.service;
+package ir.accountingsystem.reactive.ws.backendaccountingsystem.service.authentication;
 
 import ir.accountingsystem.reactive.ws.backendaccountingsystem.model.UserModel;
 import ir.accountingsystem.reactive.ws.backendaccountingsystem.repository.UserRepository;

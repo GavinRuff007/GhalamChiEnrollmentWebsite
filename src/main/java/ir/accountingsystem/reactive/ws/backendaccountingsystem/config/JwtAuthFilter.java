@@ -1,6 +1,6 @@
 package ir.accountingsystem.reactive.ws.backendaccountingsystem.config;
 
-import ir.accountingsystem.reactive.ws.backendaccountingsystem.service.UserDetailsServiceImpl;
+import ir.accountingsystem.reactive.ws.backendaccountingsystem.service.authentication.UserDetailsServiceImpl;
 import ir.accountingsystem.reactive.ws.backendaccountingsystem.util.JwtTokenProvider;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -40,24 +40,27 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             System.out.println("❌ JWT Parse Error: " + ex.getMessage());
         }
 
-        if (username != null
-                && SecurityContextHolder.getContext().getAuthentication() == null) {
+        if (username != null &&
+                SecurityContextHolder.getContext().getAuthentication() == null) {
 
             if (jwtTokenProvider.validateToken(token)) {
 
+                // 🔥 UserDetails از دیتابیس
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
+                // 🔥 Authentication با نقش‌ها
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails,
                                 null,
-                                userDetails.getAuthorities()
+                                userDetails.getAuthorities()   // نقش‌ها اینجاست
                         );
 
                 auth.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request)
                 );
 
+                // 🔥 امنیت پر می‌شود → 403 رفع می‌شود
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
         }

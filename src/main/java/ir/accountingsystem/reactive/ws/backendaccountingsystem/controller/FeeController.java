@@ -3,23 +3,21 @@ package ir.accountingsystem.reactive.ws.backendaccountingsystem.controller;
 import ir.accountingsystem.reactive.ws.backendaccountingsystem.dto.FeeCalculationRequest;
 import ir.accountingsystem.reactive.ws.backendaccountingsystem.dto.FeeCalculationResponse;
 import ir.accountingsystem.reactive.ws.backendaccountingsystem.dto.FeeInsertRequest;
-import ir.accountingsystem.reactive.ws.backendaccountingsystem.service.FeeService;
+import ir.accountingsystem.reactive.ws.backendaccountingsystem.service.calculator.FeeCalculatorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api/fees")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 public class FeeController {
 
-    private final FeeService feeService;
+    private final FeeCalculatorService feeService;
 
     @PostMapping("/insert")
     @PreAuthorize("hasAnyRole('ADMIN')")

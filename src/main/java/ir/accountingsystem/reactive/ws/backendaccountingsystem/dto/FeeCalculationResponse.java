@@ -10,5 +10,6 @@ public class FeeCalculationResponse {
     private Integer exam_fee;
     private Integer book_fee;
     private Integer total_fee;
+    private Integer support_fee;
 }
 
