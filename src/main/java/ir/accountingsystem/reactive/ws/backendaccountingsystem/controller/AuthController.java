@@ -19,7 +19,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3000", allowCredentials = "true")
 @RequiredArgsConstructor
 public class AuthController {
 
@@ -38,11 +37,12 @@ public class AuthController {
         String refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(false)
+                .secure(true)          // ⬅️ روی سرور اجباری
                 .path("/")
-                .maxAge(7 * 24 * 60 * 60)
-                .sameSite("Lax")
+                .sameSite("None")      // ⬅️ برای ارسال کوکی از Domain دیگر ضروری
+                .maxAge(7 * 24 * 3600)
                 .build();
+
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         System.out.println("✅ Cookie Set: " + cookie.toString());
         UserModel userModel = userRepository.findByUsername(request.get("username")).orElseThrow();
