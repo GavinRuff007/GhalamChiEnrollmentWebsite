@@ -45,6 +45,10 @@ services:
       SPRING_DATASOURCE_PASSWORD: test
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
+
+      # Optional extra:
+      SPRING_JPA_HIBERNATE_DDL_AUTO: none
+      SPRING_JPA_SHOW_SQL: "true"
     ports:
       - "8090:8090"
 
