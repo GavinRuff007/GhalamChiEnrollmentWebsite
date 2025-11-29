@@ -20,6 +20,14 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
+@CrossOrigin(
+        origins = {
+                "http://localhost:3000",
+                "http://217.182.185.198:2025",
+                "http://217.182.185.198",
+        },
+        allowCredentials = "true"
+)
 public class AuthController {
 
     private final AuthenticationManager authManager;
@@ -37,12 +45,11 @@ public class AuthController {
         String refreshToken = jwtTokenProvider.generateRefreshToken(authentication);
         ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
-                .secure(true)          // ⬅️ روی سرور اجباری
+                .secure(false)
                 .path("/")
-                .sameSite("None")      // ⬅️ برای ارسال کوکی از Domain دیگر ضروری
-                .maxAge(7 * 24 * 3600)
+                .maxAge(7 * 24 * 60 * 60)
+                .sameSite("Lax")
                 .build();
-
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         System.out.println("✅ Cookie Set: " + cookie.toString());
         UserModel userModel = userRepository.findByUsername(request.get("username")).orElseThrow();
