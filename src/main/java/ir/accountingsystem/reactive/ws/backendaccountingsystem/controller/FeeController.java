@@ -14,7 +14,6 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/fees")
 @RequiredArgsConstructor
-
 public class FeeController {
 
     private final FeeCalculatorService feeService;
