@@ -45,22 +45,19 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             if (jwtTokenProvider.validateToken(token)) {
 
-                // 🔥 UserDetails از دیتابیس
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
-                // 🔥 Authentication با نقش‌ها
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails,
                                 null,
-                                userDetails.getAuthorities()   // نقش‌ها اینجاست
+                                userDetails.getAuthorities()
                         );
 
                 auth.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request)
                 );
 
-                // 🔥 امنیت پر می‌شود → 403 رفع می‌شود
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
         }

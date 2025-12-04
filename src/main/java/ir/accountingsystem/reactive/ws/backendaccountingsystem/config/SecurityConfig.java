@@ -41,13 +41,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/support/**").permitAll()
                         .requestMatchers("/api/fees/**").permitAll()
 
-                        // 🔥 مسیرهای اصلی که نیاز به login دارند
                         .requestMatchers("/api/register/**").authenticated()
                         .requestMatchers("/api/classes/**").authenticated()
                         .requestMatchers("/api/user/**").authenticated()
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
 
-                        // 🔥 بقیه مسیرها
                         .anyRequest().permitAll()
                 )
                 .addFilterBefore(new JwtAuthFilter(jwtTokenProvider, userDetailsService),
@@ -58,12 +56,11 @@ public class SecurityConfig {
 
 
 
-    // 🔥 CORS صحیح (تنها قسمتی که واقعا اجرا می‌شود)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowCredentials(true);
-        config.addAllowedOriginPattern("*"); // راحت‌ترین حالت چون روی IP هستی
+        config.addAllowedOriginPattern("*");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
         config.addExposedHeader("Authorization");

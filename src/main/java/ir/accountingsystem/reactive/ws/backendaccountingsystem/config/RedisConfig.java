@@ -20,7 +20,6 @@ public class RedisConfig {
 
         template.setConnectionFactory(connectionFactory);
 
-        // تبدیل Object → JSON
         Jackson2JsonRedisSerializer<Object> serializer =
                 new Jackson2JsonRedisSerializer<>(Object.class);
 

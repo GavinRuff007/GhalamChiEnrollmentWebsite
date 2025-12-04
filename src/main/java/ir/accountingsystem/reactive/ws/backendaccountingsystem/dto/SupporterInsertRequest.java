@@ -5,6 +5,6 @@ import lombok.Data;
 @Data
 public class SupporterInsertRequest {
     private String fullName;
-    private String nationalCode;  // optional
-    private Integer dailyPrice;   // هزینه یک روز
+    private String nationalCode;
+    private Integer dailyPrice;
 }

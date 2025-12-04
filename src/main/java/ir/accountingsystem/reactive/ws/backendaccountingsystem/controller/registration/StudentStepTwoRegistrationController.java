@@ -1,4 +1,4 @@
-package ir.accountingsystem.reactive.ws.backendaccountingsystem.controller;
+package ir.accountingsystem.reactive.ws.backendaccountingsystem.controller.registration;
 
 import ir.accountingsystem.reactive.ws.backendaccountingsystem.dto.RegistrationInfo;
 import ir.accountingsystem.reactive.ws.backendaccountingsystem.service.registration.StudentStepTwoRegistrationService;
@@ -13,9 +13,6 @@ public class StudentStepTwoRegistrationController {
 
     private final StudentStepTwoRegistrationService service;
 
-    // ============================================================
-    // ذخیره مرحله ۲ — فرانت این را صدا می‌زند
-    // ============================================================
     @PostMapping
     public ResponseEntity<RegistrationInfo> saveStep2(@RequestBody RegistrationInfo info) {
 
@@ -27,9 +24,7 @@ public class StudentStepTwoRegistrationController {
         return ResponseEntity.ok(saved);
     }
 
-    // ============================================================
-    // دریافت مرحله ۲
-    // ============================================================
+
     @GetMapping("/{nationalCode}")
     public ResponseEntity<RegistrationInfo> getStep2(@PathVariable String nationalCode) {
 

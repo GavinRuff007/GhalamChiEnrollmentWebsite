@@ -51,9 +51,6 @@ public class StudentRegistrationStatusService {
         return repo.save(status);
     }
 
-    // ====================================================
-    //     محل صحیح updateStatusTable  (این کلاس)
-    // ====================================================
     private StudentRegistrationStatus updateStatusTable(
             String nationalCode,
             Long stepId,
@@ -65,14 +62,12 @@ public class StudentRegistrationStatusService {
                                 new RuntimeException("StudentRegistrationStatus not found for nationalCode: " + nationalCode)
                         );
 
-        // اتصال به مرحله مربوطه
         switch (completedStepNumber) {
             case 2 -> status.setStep2Id(stepId);
             case 3 -> status.setStep3Id(stepId);
             case 4 -> status.setStep4Id(stepId);
         }
 
-        // مقدار مستقیم مرحله تکمیل شده
         status.setCompletedSteps(completedStepNumber);
 
         return status;

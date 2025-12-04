@@ -34,7 +34,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
         filterChain.doFilter(wrappedRequest, response);
     }
 
-    // ===================== Wrapper =====================
+
     public static class CachedBodyHttpServletRequest extends HttpServletRequestWrapper {
 
         private final byte[] cachedBody;

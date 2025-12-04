@@ -21,14 +21,10 @@ public class StudentStepOneRegistrationService {
         return "register:step1:" + nationalCode;
     }
 
-    // ------------------------------------------------------------
-    // ذخیره مرحله ۱ (Step1)
-    // ------------------------------------------------------------
     public StudentPersonalInfo saveStep1(StudentPersonalInfo info) {
 
         String key = redisKey(info.getNationalCode());
 
-        // 1) ابتدا Redis چک شود
         Object cached = redisTemplate.opsForValue().get(key);
 
         if (cached != null) {
@@ -36,34 +32,27 @@ public class StudentStepOneRegistrationService {
             return (StudentPersonalInfo) cached;
         }
 
-        // 2) ذخیره در دیتابیس (MySQL)
         StudentPersonalInfo saved = repo.save(info);
 
-        // 3) ذخیره در جدول وضعیت (student_registration_status)
         StudentRegistrationStatus status = statusService.attachStep1(saved);
         System.out.println("✔ Step1 attached to status table with ID: " + status.getId());
 
-        // 4) ذخیره در Redis — اعتبار ۱ ساعت
         redisTemplate.opsForValue().set(key, saved, 1, TimeUnit.HOURS);
 
         return saved;
     }
 
-    // ------------------------------------------------------------
-    // دریافت مرحله ۱ (Step1)
-    // ------------------------------------------------------------
+
     public StudentPersonalInfo getStep1(String nationalCode) {
 
         String key = redisKey(nationalCode);
 
-        // 1) تلاش برای خواندن از Redis
         Object cached = redisTemplate.opsForValue().get(key);
         if (cached != null) {
             System.out.println("✔ Returning Step1 from Redis cache");
             return (StudentPersonalInfo) cached;
         }
 
-        // 2) اگر در Redis نبود → از دیتابیس بخوان
         StudentPersonalInfo result = repo
                 .findAll()
                 .stream()
@@ -72,7 +61,6 @@ public class StudentStepOneRegistrationService {
                 .orElse(null);
 
         if (result != null) {
-            // ذخیره مجدد در Redis برای بهبود سرعت آینده
             redisTemplate.opsForValue().set(key, result, 1, TimeUnit.HOURS);
         }
 

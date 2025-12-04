@@ -21,46 +21,35 @@ public class StudentStepTwoRegistrationService {
         return "register:step2:" + nationalCode;
     }
 
-    // ============================================================
-    // ذخیره Step 2
-    // ============================================================
     public RegistrationInfo saveStep2(RegistrationInfo info) {
 
         String key = redisKey(info.getNationalCode());
 
-        // 1) ابتدا Redis چک شود
         Object cached = redisTemplate.opsForValue().get(key);
         if (cached != null) {
             System.out.println("⚠ Step2 already cached – returning Redis version");
             return (RegistrationInfo) cached;
         }
 
-        // 2) ذخیره در MySQL (entity تبدیل از DTO)
         RegistrationInfoEntity saved = repo.save(
                 RegistrationInfoEntity.fromDto(info)
         );
 
-        // 3) ذخیره در Redis (برای 1 ساعت)
         redisTemplate.opsForValue().set(key, info, 1, TimeUnit.HOURS);
 
-        // 4) اتصال به جدول وضعیت ثبت‌نام (StudentRegistrationStatus)
         statusService.attachStep2(info.getNationalCode(), saved.getId());
 
         return info;
     }
 
-    // ============================================================
-    // گرفتن Step 2
-    // ============================================================
+
     public RegistrationInfo getStep2(String nationalCode) {
 
         String key = redisKey(nationalCode);
 
-        // 1) ابتدا Redis چک شود
         Object cached = redisTemplate.opsForValue().get(key);
         if (cached != null) return (RegistrationInfo) cached;
 
-        // 2) جستجو در DB بر اساس nationalCode
         return repo
                 .findAll()
                 .stream()

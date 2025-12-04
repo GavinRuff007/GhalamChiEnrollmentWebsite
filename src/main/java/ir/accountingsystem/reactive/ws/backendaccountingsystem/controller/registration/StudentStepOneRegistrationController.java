@@ -1,4 +1,4 @@
-package ir.accountingsystem.reactive.ws.backendaccountingsystem.controller;
+package ir.accountingsystem.reactive.ws.backendaccountingsystem.controller.registration;
 
 import ir.accountingsystem.reactive.ws.backendaccountingsystem.dto.StudentPersonalInfo;
 import ir.accountingsystem.reactive.ws.backendaccountingsystem.service.registration.StudentStepOneRegistrationService;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/register/step1")
 @RequiredArgsConstructor
-public class StudentPersonalInfoController_StepOne {
+public class StudentStepOneRegistrationController {
 
     private final StudentStepOneRegistrationService service;
 
