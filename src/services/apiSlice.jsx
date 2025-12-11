@@ -3,7 +3,6 @@ import { baseQueryWithReauth } from "./baseQuery";
 
 export const apiSlice = createApi({
   reducerPath: "api",
-
   baseQuery: baseQueryWithReauth,
 
   tagTypes: [
@@ -16,6 +15,10 @@ export const apiSlice = createApi({
   ],
 
   endpoints: (builder) => ({
+
+    // --------------------------
+    // 🔐 Login
+    // --------------------------
     login: builder.mutation({
       query: (body) => ({
         url: "/auth/login",
@@ -24,6 +27,9 @@ export const apiSlice = createApi({
       }),
     }),
 
+    // --------------------------
+    // STEP 1
+    // --------------------------
     getStep1: builder.query({
       query: (nc) => `/register/step1/${nc}`,
       providesTags: ["Step1"],
@@ -38,6 +44,9 @@ export const apiSlice = createApi({
       invalidatesTags: ["Step1"],
     }),
 
+    // --------------------------
+    // STEP 2
+    // --------------------------
     getStep2: builder.query({
       query: (nc) => `/register/step2/${nc}`,
       providesTags: ["Step2"],
@@ -52,6 +61,14 @@ export const apiSlice = createApi({
       invalidatesTags: ["Step2"],
     }),
 
+    // --------------------------
+    // STEP 3
+    // --------------------------
+    getStep3: builder.query({
+      query: (nc) => `/register/step3/${nc}`,
+      providesTags: ["Step3"],
+    }),
+
     saveStep3: builder.mutation({
       query: (data) => ({
         url: "/register/step3",
@@ -61,16 +78,25 @@ export const apiSlice = createApi({
       invalidatesTags: ["Step3"],
     }),
 
+    // --------------------------
+    // Classes by grade
+    // --------------------------
     getClasses: builder.query({
       query: (grade) => `/classes/${grade}`,
       providesTags: ["Classes"],
     }),
 
+    // --------------------------
+    // Supporters
+    // --------------------------
     getSupporters: builder.query({
       query: () => "/support/list",
       providesTags: ["Supporters"],
     }),
 
+    // --------------------------
+    // Fee Calculation
+    // --------------------------
     calculateFees: builder.mutation({
       query: (body) => ({
         url: "/fees/calculate",
@@ -79,6 +105,7 @@ export const apiSlice = createApi({
       }),
       invalidatesTags: ["Fees"],
     }),
+
   }),
 });
 
@@ -88,7 +115,10 @@ export const {
   useSaveStep1Mutation,
   useGetStep2Query,
   useSaveStep2Mutation,
+
+  useGetStep3Query,  
   useSaveStep3Mutation,
+
   useGetClassesQuery,
   useGetSupportersQuery,
   useCalculateFeesMutation,

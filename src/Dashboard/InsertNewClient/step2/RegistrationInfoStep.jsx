@@ -36,7 +36,7 @@ const RegistrationInfoStep = () => {
   useSupportCalculator(reg, supporters, dispatch);
 
 
-  const fees = useFeeCalculator(reg, subjects, calculateFees);
+  const fees = useFeeCalculator(reg, subjects, calculateFees,dispatch);
 
   return (
     <div className="next-page">

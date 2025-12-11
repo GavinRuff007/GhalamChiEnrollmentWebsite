@@ -76,6 +76,8 @@ const initialState = {
     installmentSupport: "",
     installmentCountSupport: "",
     supportInstallments: [],
+    total_fee: 0
+
   }
 };
 

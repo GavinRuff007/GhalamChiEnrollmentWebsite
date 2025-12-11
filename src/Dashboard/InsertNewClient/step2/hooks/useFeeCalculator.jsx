@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { updateFeeInfo } from "../../../../slices/formSlice";
 import { calcClassFee } from "../utils/calcClassFee";
 
 
-export const useFeeCalculator = (reg, subjects, calculateFees) => {
+export const useFeeCalculator = (reg, subjects, calculateFees, dispatch) => {
   const [fees, setFees] = useState(null);
 
   const calcAll = useCallback(async () => {
@@ -41,7 +42,9 @@ export const useFeeCalculator = (reg, subjects, calculateFees) => {
 
     setFees(newFees);
 
-  }, [reg, subjects, calculateFees]);
+    // ⬅️⬅️ مهم‌ترین چیز:
+    dispatch(updateFeeInfo({ total_fee: newFees.total_fee }));
+  }, [reg, subjects, calculateFees, dispatch]);
 
   useEffect(() => {
     calcAll();

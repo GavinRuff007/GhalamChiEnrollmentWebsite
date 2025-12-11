@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import "./InsertNewClient.css";
+import cleanStep3Data  from "./utils/cleanStep3Data";
 
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -183,38 +184,29 @@ const InsertNewClient = () => {
     }
 
     // ------------------- Step 3 -------------------
-    if (activeStep === 3) {
-      const { installment, installmentCount } = feeInfo;
+   if (activeStep === 3) {
 
-      if (!installment) newErrors.installment = "انتخاب الزامی است";
-      if (installment === "بله" && (!installmentCount || installmentCount <= 0)) {
-        newErrors.installmentCount = "تعداد اقساط لازم است";
-      }
+  dispatch(setErrors(newErrors));
+  if (Object.keys(newErrors).length > 0) return;
 
-      dispatch(setErrors(newErrors));
-      if (Object.keys(newErrors).length > 0) return;
+  const cleaned = cleanStep3Data(feeInfo, personalInfo.nationalCode);
 
-      localStorage.setItem("feeInfo", JSON.stringify(feeInfo));
+  console.log("SENDING STEP3:", cleaned);
 
-      try {
-        await saveStep3(feeInfo).unwrap();
-      } catch (err) {
-        console.error("❌ Error saving step3:", err);
-        alert("خطا در ذخیره اطلاعات مرحله شهریه");
-        return;
-      }
+  try {
+    await saveStep3(cleaned).unwrap();
+  } catch (err) {
+    console.error("❌ Error saving step3:", err);
+    alert("خطا در ذخیره اطلاعات مرحله شهریه");
+    return;
+  }
 
-      dispatch(clearErrors());
-      dispatch(setActiveStep(4));
-      return;
-    }
+  dispatch(clearErrors());
+  dispatch(setActiveStep(4));
+  return;
+}
+  }
 
-    // ------------------- Step 4 → نهایی -------------------
-    if (activeStep === 4) {
-      dispatch(setActiveStep(5));
-      return;
-    }
-  };
 
   // ===============================================================
   // دکمه "برگشت"
@@ -256,7 +248,7 @@ const InsertNewClient = () => {
       <main className="dashboard-content">
         {activeStep === 1 && <PersonalInfoStep errors={errors} />}
         {activeStep === 2 && <RegistrationInfoStep errors={errors} />}
-        {activeStep === 3 && <FeeInfoStep errors={errors} />}
+        {activeStep === 3 && <FeeInfoStep errors={errors} fees={feeInfo} />}
         {activeStep === 4 && <DocumentsStep />}
         {activeStep === 5 && <h1>✔ ثبت نهایی انجام شد</h1>}
       </main>
