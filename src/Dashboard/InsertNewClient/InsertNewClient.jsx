@@ -1,6 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import "./InsertNewClient.css";
-import cleanStep3Data  from "./utils/cleanStep3Data";
+import cleanStep3Data from "./utils/cleanStep3Data";
+import FinalReviewStep from "./step5/FinalReviewStep";
+
 
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -13,6 +15,8 @@ import {
   clearErrors,
 } from "../../slices/formSlice";
 
+import { useParams } from "react-router-dom";
+
 import PersonalInfoStep from "./step1/PersonalInfoStep";
 import RegistrationInfoStep from "./step2/RegistrationInfoStep";
 import FeeInfoStep from "./step3/FeeInfoStep";
@@ -24,18 +28,21 @@ import {
   useSaveStep3Mutation,
   useGetStep1Query,
   useGetStep2Query,
+  useGetStep3Query, // اگر نداری حذف کن
 } from "../../services/apiSlice";
 
 const InsertNewClient = () => {
   const dispatch = useDispatch();
+  const { nationalCode: routeNationalCode } = useParams();
+  const isEditMode = Boolean(routeNationalCode);
 
-  const {
-    activeStep,
-    personalInfo,
-    registrationInfo,
-    feeInfo,
-    errors,
-  } = useSelector((state) => state.form);
+  const { activeStep, personalInfo, registrationInfo, feeInfo, errors } =
+    useSelector((state) => state.form);
+
+  // کد ملی نهایی (در حالت ویرایش از route، در حالت جدید از redux)
+  const nationalCode = useMemo(() => {
+    return isEditMode ? routeNationalCode : personalInfo?.nationalCode;
+  }, [isEditMode, routeNationalCode, personalInfo?.nationalCode]);
 
   const steps = [
     { title: "اطلاعات شخص", number: 1 },
@@ -50,20 +57,25 @@ const InsertNewClient = () => {
   const [saveStep2] = useSaveStep2Mutation();
   const [saveStep3] = useSaveStep3Mutation();
 
-  const { data: serverStep1 } = useGetStep1Query(
-    personalInfo.nationalCode,
-    { skip: !personalInfo.nationalCode }
-  );
+  // در حالت Edit → با routeNationalCode داده را بخوان
+  const { data: serverStep1 } = useGetStep1Query(routeNationalCode, {
+    skip: !isEditMode,
+  });
 
-  const { data: serverStep2 } = useGetStep2Query(
-    personalInfo.nationalCode,
-    { skip: !personalInfo.nationalCode }
-  );
+  const { data: serverStep2 } = useGetStep2Query(routeNationalCode, {
+    skip: !isEditMode,
+  });
+
+  const { data: serverStep3 } = useGetStep3Query(routeNationalCode, {
+    skip: !isEditMode,
+  });
 
   // ===============================================================
-  // 🌟 بارگذاری اولیه از localStorage
+  // 🌟 حالت NEW: بارگذاری اولیه از localStorage
   // ===============================================================
   useEffect(() => {
+    if (isEditMode) return; // ⛔️ در ویرایش از localStorage نخوان
+
     const savedPersonal = localStorage.getItem("personalInfo");
     const savedReg = localStorage.getItem("registrationInfo");
     const savedFee = localStorage.getItem("feeInfo");
@@ -71,32 +83,86 @@ const InsertNewClient = () => {
     if (savedPersonal) dispatch(updatePersonalInfo(JSON.parse(savedPersonal)));
     if (savedReg) dispatch(updateRegistrationInfo(JSON.parse(savedReg)));
     if (savedFee) dispatch(updateFeeInfo(JSON.parse(savedFee)));
-  }, [dispatch]);
+  }, [dispatch, isEditMode]);
 
   // ===============================================================
-  // 🌟 اگر Step1 از سرور آمد → پر کن
+  // 🌟 حالت EDIT: وقتی routeNationalCode تغییر کرد → فرم را ریست کن
   // ===============================================================
   useEffect(() => {
-    if (serverStep1) {
-      dispatch(updatePersonalInfo(serverStep1));
-      localStorage.setItem("personalInfo", JSON.stringify(serverStep1));
-    }
-  }, [serverStep1, dispatch]);
+    if (!isEditMode) return;
+
+    dispatch(resetForm());
+    dispatch(clearErrors());
+    dispatch(setActiveStep(1));
+
+    // اینجا localStorage را هم پاک می‌کنیم تا تداخل نشود
+    localStorage.removeItem("personalInfo");
+    localStorage.removeItem("registrationInfo");
+    localStorage.removeItem("feeInfo");
+  }, [dispatch, isEditMode, routeNationalCode]);
 
   // ===============================================================
-  // 🌟 اگر Step2 از سرور آمد → فقط در صورت نبود localStorage
+  // 🌟 حالت EDIT: لود Step1 از سرور
   // ===============================================================
   useEffect(() => {
+    if (!isEditMode) return;
+    if (!serverStep1) return;
+
+    dispatch(updatePersonalInfo(serverStep1));
+    localStorage.setItem("personalInfo", JSON.stringify(serverStep1));
+  }, [isEditMode, serverStep1, dispatch]);
+
+  // ===============================================================
+  // 🌟 حالت EDIT: لود Step2 از سرور
+  // ===============================================================
+  useEffect(() => {
+    if (!isEditMode) return;
     if (!serverStep2) return;
 
-    const savedReg = localStorage.getItem("registrationInfo");
+    dispatch(updateRegistrationInfo(serverStep2));
+    localStorage.setItem("registrationInfo", JSON.stringify(serverStep2));
+  }, [isEditMode, serverStep2, dispatch]);
 
-    // فقط وقتی قبلاً ذخیره نشده، با دیتا سرور مقدار بده
-    if (!savedReg) {
-      dispatch(updateRegistrationInfo(serverStep2));
-      localStorage.setItem("registrationInfo", JSON.stringify(serverStep2));
+  // ===============================================================
+  // 🌟 حالت EDIT: لود Step3 از سرور
+  // ===============================================================
+  useEffect(() => {
+    if (!isEditMode) return;
+    if (!serverStep3) return;
+
+    dispatch(updateFeeInfo(serverStep3));
+    localStorage.setItem("feeInfo", JSON.stringify(serverStep3));
+  }, [isEditMode, serverStep3, dispatch]);
+
+  // ===============================================================
+  // 🌟 حالت EDIT: تعیین مرحله فعال بر اساس داده‌های سرور
+  // - اگر step3 هست برو مرحله 4
+  // - اگر step2 هست برو مرحله 3
+  // - اگر step1 هست برو مرحله 2
+  // - در غیر اینصورت مرحله 1
+  // ===============================================================
+  useEffect(() => {
+    if (!isEditMode) return;
+
+    // وقتی Step1 آمد، حداقل مرحله را مشخص کن
+    if (serverStep1 && !serverStep2 && !serverStep3) {
+      dispatch(setActiveStep(2));
+      return;
     }
-  }, [serverStep2, dispatch]);
+
+    if (serverStep2 && !serverStep3) {
+      dispatch(setActiveStep(3));
+      return;
+    }
+
+    if (serverStep3) {
+      dispatch(setActiveStep(4));
+      return;
+    }
+
+    // اگر هیچی نبود
+    dispatch(setActiveStep(1));
+  }, [isEditMode, serverStep1, serverStep2, serverStep3, dispatch]);
 
   // ===============================================================
   // دکمه "بعدی"
@@ -107,17 +173,23 @@ const InsertNewClient = () => {
     // ------------------- Step 1 -------------------
     if (activeStep === 1) {
       const required = [
-        "code", "date", "name", "family",
-        "grade", "gender", "phone1", "nationalCode",
+        "code",
+        "date",
+        "name",
+        "family",
+        "grade",
+        "gender",
+        "phone1",
+        "nationalCode",
       ];
 
       required.forEach((f) => {
-        if (!personalInfo[f] || personalInfo[f].trim() === "") {
+        if (!personalInfo?.[f] || String(personalInfo[f]).trim() === "") {
           newErrors[f] = "پر کردن الزامی است";
         }
       });
 
-      if (!/^\d{10}$/.test(personalInfo.nationalCode)) {
+      if (!/^\d{10}$/.test(String(personalInfo?.nationalCode || ""))) {
         newErrors.nationalCode = "کد ملی باید ۱۰ رقم باشد";
       }
 
@@ -141,7 +213,7 @@ const InsertNewClient = () => {
 
     // ------------------- Step 2 -------------------
     if (activeStep === 2) {
-      const { typeOption, examCount } = registrationInfo;
+      const { typeOption, examCount } = registrationInfo || {};
 
       if (!typeOption) newErrors.typeOption = "نوع انتخاب نشده";
       if (!examCount) newErrors.examCount = "تعداد آزمون لازم است";
@@ -150,24 +222,23 @@ const InsertNewClient = () => {
       if (Object.keys(newErrors).length > 0) return;
 
       localStorage.setItem("registrationInfo", JSON.stringify(registrationInfo));
-      console.log("SENDING STEP2:", registrationInfo);
 
       const payload = {
-        nationalCode: personalInfo.nationalCode,
-        typeOption: registrationInfo.typeOption,
-        recruiter: registrationInfo.recruiter,
-        examCount: registrationInfo.examCount,
-        bookVoucher: registrationInfo.bookVoucher,
-        discountExam: Number(registrationInfo.discountExam) || 0,
-        discountClass: Number(registrationInfo.discountClass) || 0,
-        classCount: registrationInfo.classCount,
-        specialSupport: registrationInfo.specialSupport,
-        supporterId: registrationInfo.supportInfo?.supporterId || null,
-        supportStart: registrationInfo.supportInfo?.startDate || null,
-        supportEnd: registrationInfo.supportInfo?.endDate || null,
-        supportDays: registrationInfo.supportInfo?.days || 0,
-        supportDailyPrice: registrationInfo.supportInfo?.dailyPrice || 0,
-        supportFee: registrationInfo.supportInfo?.fee || 0,
+        nationalCode: nationalCode, // ✅ از route یا redux
+        typeOption: registrationInfo?.typeOption ?? null,
+        recruiter: registrationInfo?.recruiter ?? null,
+        examCount: registrationInfo?.examCount ?? null,
+        bookVoucher: registrationInfo?.bookVoucher ?? null,
+        discountExam: Number(registrationInfo?.discountExam) || 0,
+        discountClass: Number(registrationInfo?.discountClass) || 0,
+        classCount: registrationInfo?.classCount ?? 0,
+        specialSupport: registrationInfo?.specialSupport ?? false,
+        supporterId: registrationInfo?.supportInfo?.supporterId || null,
+        supportStart: registrationInfo?.supportInfo?.startDate || null,
+        supportEnd: registrationInfo?.supportInfo?.endDate || null,
+        supportDays: registrationInfo?.supportInfo?.days || 0,
+        supportDailyPrice: registrationInfo?.supportInfo?.dailyPrice || 0,
+        supportFee: registrationInfo?.supportInfo?.fee || 0,
       };
 
       try {
@@ -184,29 +255,34 @@ const InsertNewClient = () => {
     }
 
     // ------------------- Step 3 -------------------
-   if (activeStep === 3) {
+    if (activeStep === 3) {
+      dispatch(setErrors(newErrors));
+      if (Object.keys(newErrors).length > 0) return;
 
-  dispatch(setErrors(newErrors));
-  if (Object.keys(newErrors).length > 0) return;
+      const cleaned = cleanStep3Data(feeInfo, nationalCode); // ✅ کد ملی درست
 
-  const cleaned = cleanStep3Data(feeInfo, personalInfo.nationalCode);
+      localStorage.setItem("feeInfo", JSON.stringify(cleaned));
+      console.log("SENDING STEP3:", cleaned);
 
-  console.log("SENDING STEP3:", cleaned);
+      try {
+        await saveStep3(cleaned).unwrap();
+      } catch (err) {
+        console.error("❌ Error saving step3:", err);
+        alert("خطا در ذخیره اطلاعات مرحله شهریه");
+        return;
+      }
 
-  try {
-    await saveStep3(cleaned).unwrap();
-  } catch (err) {
-    console.error("❌ Error saving step3:", err);
-    alert("خطا در ذخیره اطلاعات مرحله شهریه");
-    return;
-  }
+      dispatch(clearErrors());
+      dispatch(setActiveStep(4));
+      return;
+    }
 
-  dispatch(clearErrors());
-  dispatch(setActiveStep(4));
-  return;
-}
-  }
-
+    // ------------------- Step 4 → نهایی -------------------
+    if (activeStep === 4) {
+      dispatch(setActiveStep(5));
+      return;
+    }
+  };
 
   // ===============================================================
   // دکمه "برگشت"
@@ -230,12 +306,15 @@ const InsertNewClient = () => {
 
   return (
     <div className="dashboard-home">
-
       <header className="dashboard-header">
         <div className="process-container">
           {steps.map((step, i) => (
             <div key={i} className="process-step">
-              <div className={`circle ${step.number <= activeStep ? "active" : ""}`}>
+              <div
+                className={`circle ${
+                  step.number <= activeStep ? "active" : ""
+                }`}
+              >
                 {step.number}
               </div>
               <div className="label">{step.title}</div>
@@ -250,12 +329,18 @@ const InsertNewClient = () => {
         {activeStep === 2 && <RegistrationInfoStep errors={errors} />}
         {activeStep === 3 && <FeeInfoStep errors={errors} fees={feeInfo} />}
         {activeStep === 4 && <DocumentsStep />}
-        {activeStep === 5 && <h1>✔ ثبت نهایی انجام شد</h1>}
+        {activeStep === 5 && <FinalReviewStep />}
       </main>
 
       <div className="button-container">
-        <button className="reset-btn" onClick={handleReset}>ریست</button>
-        {activeStep > 1 && <button className="back-btn" onClick={handleBack}>برگشت</button>}
+        <button className="reset-btn" onClick={handleReset}>
+          ریست
+        </button>
+        {activeStep > 1 && (
+          <button className="back-btn" onClick={handleBack}>
+            برگشت
+          </button>
+        )}
         <button className="next-btn" onClick={handleNext}>
           {activeStep < 5 ? "بعدی" : "تأیید نهایی"}
         </button>

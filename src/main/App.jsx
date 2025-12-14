@@ -1,14 +1,17 @@
 import "./App.css";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+
 import CustomerDashboard from "../Dashboard/CustomerDashboard";
+import AdminDashboard from "../Dashboard/AdminDashboard";
 import InsertNewClient from "../Dashboard/InsertNewClient/InsertNewClient";
 import Records from "../Dashboard/Records/Records";
-import AdminDashboard from "../Dashboard/AdminDashboard";
-import Login from "../Authorization/Login";
-import ProtectedRoute, { DefaultRedirect } from "../validations/ProtectedRoute";
-import { ToastContainer } from "react-toastify";
-import AppHeader from "../Dashboard/Appheader";
 import ConfigLoginSystem from "../Dashboard/configSystem(Admin)/ConfigLoginSystem";
+import Login from "../Authorization/Login";
+
+import ProtectedRoute, { DefaultRedirect } from "../validations/ProtectedRoute";
+import AppHeader from "../Dashboard/Appheader";
+
+import { ToastContainer } from "react-toastify";
 
 function App() {
   return (
@@ -21,10 +24,14 @@ function App() {
         <AppHeader />
 
         <Routes>
-          {/* صفحه ورود */}
+          {/* ===================== */}
+          {/* 🔐 Login */}
+          {/* ===================== */}
           <Route path="/login" element={<Login />} />
 
-          {/* مسیر برای کاربر معمولی */}
+          {/* ===================== */}
+          {/* 👤 User Dashboard */}
+          {/* ===================== */}
           <Route
             path="/dashboard"
             element={
@@ -33,11 +40,22 @@ function App() {
               </ProtectedRoute>
             }
           >
+            {/* ثبت جدید */}
             <Route index element={<InsertNewClient />} />
+
+            {/* ادامه / ویرایش با کد ملی */}
+            <Route
+              path="edit/:nationalCode"
+              element={<InsertNewClient />}
+            />
+
+            {/* لیست متقاضیان */}
             <Route path="records" element={<Records />} />
           </Route>
 
-          {/* مسیر برای ادمین */}
+          {/* ===================== */}
+          {/* 👑 Admin Dashboard */}
+          {/* ===================== */}
           <Route
             path="/adminDashboard"
             element={
@@ -46,18 +64,37 @@ function App() {
               </ProtectedRoute>
             }
           >
+            {/* ثبت جدید */}
             <Route index element={<InsertNewClient />} />
-            <Route path="config" element={<ConfigLoginSystem />} /> {/* مسیر جدید */}
+
+            {/* ادامه / ویرایش با کد ملی */}
+            <Route
+              path="edit/:nationalCode"
+              element={<InsertNewClient />}
+            />
+
+            {/* تنظیمات سیستم */}
+            <Route path="config" element={<ConfigLoginSystem />} />
+
+            {/* لیست متقاضیان */}
             <Route path="records" element={<Records />} />
           </Route>
 
-          {/* مسیر پیش‌فرض بر اساس نقش */}
+          {/* ===================== */}
+          {/* 🔁 Default Redirect */}
+          {/* ===================== */}
           <Route path="/" element={<DefaultRedirect />} />
 
-          {/* صفحه 404 */}
+          {/* ===================== */}
+          {/* ❌ 404 */}
+          {/* ===================== */}
           <Route
             path="*"
-            element={<h2 style={{ padding: "50px" }}>صفحه مورد نظر یافت نشد 😕</h2>}
+            element={
+              <h2 style={{ padding: "50px", textAlign: "center" }}>
+                صفحه مورد نظر یافت نشد 😕
+              </h2>
+            }
           />
         </Routes>
       </BrowserRouter>

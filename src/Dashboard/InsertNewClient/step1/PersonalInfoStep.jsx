@@ -10,7 +10,9 @@ const PersonalInfoStep = () => {
   const formData = useSelector((s) => s.form.personalInfo);
   const errors = useSelector((s) => s.form.errors);
 
-  const update = (obj) => dispatch(updatePersonalInfo(obj));
+  const update = (obj) => {
+    dispatch(updatePersonalInfo(obj));
+  };
 
   return (
     <>

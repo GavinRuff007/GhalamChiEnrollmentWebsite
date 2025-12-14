@@ -28,7 +28,6 @@ const CustomerDashboard = () => {
     backgroundColor: darkTheme ? "#1677ff" : "#f0f0f0",
   };
 
-  // ساخت آرایه ای از آیتم های منو با استفاده از `items`
   const menuItems = [
     {
       key: "1",

@@ -12,6 +12,7 @@ export const apiSlice = createApi({
     "Classes",
     "Supporters",
     "Fees",
+    "Records",
   ],
 
   endpoints: (builder) => ({
@@ -79,7 +80,7 @@ export const apiSlice = createApi({
     }),
 
     // --------------------------
-    // Classes by grade
+    // Classes
     // --------------------------
     getClasses: builder.query({
       query: (grade) => `/classes/${grade}`,
@@ -106,6 +107,14 @@ export const apiSlice = createApi({
       invalidatesTags: ["Fees"],
     }),
 
+    // --------------------------
+    // 📋 Records
+    // --------------------------
+    getRecords: builder.query({
+      query: () => "/records",
+      providesTags: ["Records"],
+    }),
+
   }),
 });
 
@@ -115,11 +124,10 @@ export const {
   useSaveStep1Mutation,
   useGetStep2Query,
   useSaveStep2Mutation,
-
-  useGetStep3Query,  
+  useGetStep3Query,
   useSaveStep3Mutation,
-
   useGetClassesQuery,
   useGetSupportersQuery,
   useCalculateFeesMutation,
+  useGetRecordsQuery,
 } = apiSlice;

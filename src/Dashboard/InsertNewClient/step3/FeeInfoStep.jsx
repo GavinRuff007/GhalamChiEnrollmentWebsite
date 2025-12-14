@@ -8,9 +8,6 @@ const FeeInfoStep = (props) => {
   const { fees } = props;
   const { payments, addPayment, updatePayment } = usePaymentManager();
 
-  // --------------------------
-  //   محاسبه جمع کل و باقی‌مانده
-  // --------------------------
   const total = fees?.total_fee || 0;
 
   const paymentsTotal = payments.reduce(
@@ -29,7 +26,6 @@ const FeeInfoStep = (props) => {
           <InitialFeeSection {...props} />
         </div>
 
-        {/* نمایش جمع کل */}
         <div className="summary-box">
           <h4>جمع کل: {total.toLocaleString("fa-IR")} تومان</h4>
 
@@ -45,7 +41,6 @@ const FeeInfoStep = (props) => {
           </div>
         </div>
 
-        {/* روش‌های پرداخت */}
         <PaymentListSection
           payments={payments}
           addPayment={addPayment}
