@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 public class StudentStepThreeRegistrationService {
 
     private final FeeInfoRepository repository;
+    private final StudentRegistrationStatusService statusService;
     private final ObjectMapper mapper = new ObjectMapper();
 
     private String normalizeLong(String value) {
@@ -41,7 +42,8 @@ public class StudentStepThreeRegistrationService {
         entity.setTotalFee(dto.getTotal_fee());
 
 
-        repository.save(entity);
+        FeeInfoEntity feeInfoEntity = repository.save(entity);
+        statusService.attachStep3(dto.getNationalCode(), feeInfoEntity.getId());
 
         return dto;
     }

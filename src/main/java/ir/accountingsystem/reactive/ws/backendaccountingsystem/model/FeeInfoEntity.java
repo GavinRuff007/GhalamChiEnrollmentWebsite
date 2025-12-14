@@ -11,6 +11,9 @@ import java.util.List;
 public class FeeInfoEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String nationalCode;
 
     @Lob
