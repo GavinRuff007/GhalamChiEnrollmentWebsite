@@ -18,4 +18,6 @@ public class SpecialSupporter {
     @Column(name = "national_code")
     private String nationalCode;
 
+    @Column(name = "season")
+    private String season;
 }

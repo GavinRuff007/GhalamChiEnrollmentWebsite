@@ -10,4 +10,5 @@ public class SupporterResponse {
     private String fullName;
     private String nationalCode;
     private Integer dailyPrice;
+    private String season;
 }

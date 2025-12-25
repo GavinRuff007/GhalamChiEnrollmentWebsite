@@ -27,6 +27,7 @@ public class SupporterService {
         SpecialSupporter supporter = new SpecialSupporter();
         supporter.setFullName(request.getFullName());
         supporter.setNationalCode(request.getNationalCode());
+        supporter.setSeason(request.getSeason().toString());
 
         supporter = supporterRepository.save(supporter);
 
@@ -52,6 +53,7 @@ public class SupporterService {
                         .fullName(s.getFullName())
                         .nationalCode(s.getNationalCode())
                         .dailyPrice(feeMap.get(s.getId()))
+                        .season(s.getSeason())
                         .build())
                 .toList();
     }

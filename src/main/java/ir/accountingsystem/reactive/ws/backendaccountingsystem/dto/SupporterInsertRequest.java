@@ -7,4 +7,5 @@ public class SupporterInsertRequest {
     private String fullName;
     private String nationalCode;
     private Integer dailyPrice;
+    private Season season;
 }

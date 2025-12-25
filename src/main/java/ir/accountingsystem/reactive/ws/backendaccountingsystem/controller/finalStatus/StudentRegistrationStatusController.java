@@ -1,4 +1,4 @@
-package ir.accountingsystem.reactive.ws.backendaccountingsystem.controller;
+package ir.accountingsystem.reactive.ws.backendaccountingsystem.controller.finalStatus;
 
 import ir.accountingsystem.reactive.ws.backendaccountingsystem.model.StudentRegistrationStatus;
 import ir.accountingsystem.reactive.ws.backendaccountingsystem.repository.StudentRegistrationStatusRepository;
