@@ -13,6 +13,8 @@ export const apiSlice = createApi({
     "Supporters",
     "Fees",
     "Records",
+    "Recruiters",
+    "Exams",
   ],
 
   endpoints: (builder) => ({
@@ -115,19 +117,68 @@ export const apiSlice = createApi({
       providesTags: ["Records"],
     }),
 
+    // --------------------------
+    // Recruiters
+    // --------------------------
+    getRecruiters: builder.query({
+      query: () => "/recruiters",
+      providesTags: ["Recruiters"],
+    }),
+
+    addRecruiter: builder.mutation({
+      query: (body) => ({
+        url: "/recruiters",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Recruiters"],
+    }),
+
+    // --------------------------
+    // Exams
+    // --------------------------
+    getExamDates: builder.query({
+      query: () => "/exams",
+      providesTags: ["Exams"],
+    }),
+
+    addExam: builder.mutation({
+      query: (body) => ({
+        url: "/exams",
+        method: "POST",
+        body,
+      }),
+      invalidatesTags: ["Exams"],
+    }),
+
   }),
 });
 
+// --------------------------
+// Hooks Export
+// --------------------------
 export const {
   useLoginMutation,
+
   useGetStep1Query,
   useSaveStep1Mutation,
+
   useGetStep2Query,
   useSaveStep2Mutation,
+
   useGetStep3Query,
   useSaveStep3Mutation,
+
   useGetClassesQuery,
   useGetSupportersQuery,
+
   useCalculateFeesMutation,
+
   useGetRecordsQuery,
+
+  useGetRecruitersQuery,
+  useAddRecruiterMutation,
+
+  useGetExamDatesQuery,
+  useAddExamMutation,
 } = apiSlice;

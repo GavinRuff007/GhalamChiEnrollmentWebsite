@@ -7,6 +7,10 @@ import {
   MenuFoldOutlined,
   MenuUnfoldOutlined,
 } from "@ant-design/icons";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { resetForm } from "../slices/formSlice";
+
 
 import faIR from "antd/es/locale/fa_IR";
 import "./Dashboard.css";
@@ -14,6 +18,9 @@ import "./Dashboard.css";
 const { Header, Sider, Content } = Layout;
 
 const CustomerDashboard = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const [collapsed, setCollapsed] = useState(false);
   const [darkTheme, setDarkTheme] = useState(true);
 
@@ -84,11 +91,33 @@ const CustomerDashboard = () => {
             {!collapsed ? "منشی" : "مد"}
           </div>
 
-          <Menu theme={theme} mode="inline" defaultSelectedKeys={["1"]} items={menuItems.map(item => ({
-            key: item.key,
-            icon: item.icon,
-            label: <Link to={item.link}>{item.label}</Link>,
-          }))} />
+          <Menu
+  theme={theme}
+  mode="inline"
+  defaultSelectedKeys={["1"]}
+  items={[
+    {
+      key: "1",
+      icon: <UserAddOutlined />,
+      label: (
+        <span
+          onClick={() => {
+            dispatch(resetForm());     // 🔥 ریست فرم
+            navigate("/dashboard");    // 🔥 رفتن به ثبت جدید
+          }}
+        >
+          ثبت اطلاعات جدید
+        </span>
+      ),
+    },
+    {
+      key: "2",
+      icon: <DatabaseOutlined />,
+      label: <Link to="records">اطلاعات ثبت‌شده</Link>,
+    },
+  ]}
+/>
+
         </Sider>
 
         {/* Main Layout */}

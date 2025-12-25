@@ -1,10 +1,17 @@
 import React from "react";
+import RecruiterConfigSection from "./RecruiterConfigSection";
+import "./ConfigLoginSystem.css";
 
 const ConfigLoginSystem = () => {
   return (
-    <div>
-      <h2>تنظیمات سیستم ثبت‌نام</h2>
-      <p>اینجا تنظیمات مربوط به سیستم ثبت‌نام نمایش داده می‌شود.</p>
+    <div className="config-container">
+      <h2 className="title">تنظیمات سیستم ثبت‌نام</h2>
+
+      {/* بخش مسئول جذب */}
+      <RecruiterConfigSection />
+
+      {/* اینجا بعداً می‌توانی بخش‌های تنظیماتی دیگر اضافه کنی */}
+      {/* <OtherConfigSection /> */}
     </div>
   );
 };

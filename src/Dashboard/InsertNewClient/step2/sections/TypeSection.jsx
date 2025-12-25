@@ -1,10 +1,18 @@
 import React from "react";
 import { updateRegistrationInfo } from "../../../../slices/formSlice";
 
+import {
+  useGetRecruitersQuery,
+  useAddRecruiterMutation,
+} from "../../../../services/apiSlice";
+
 const TypeSection = ({ reg, errors, dispatch }) => {
   const handleValue = (e) => {
     dispatch(updateRegistrationInfo({ [e.target.name]: e.target.value }));
   };
+
+  const { data: recruiters = [] } = useGetRecruitersQuery();
+  const [addRecruiter] = useAddRecruiterMutation();
 
   const handleType = (e) => {
     const value = e.target.value;
@@ -56,28 +64,40 @@ const TypeSection = ({ reg, errors, dispatch }) => {
       {/* مسئول جذب */}
       <div className="form-group">
         <label>مسئول جذب</label>
+
         <select
           name="recruiter"
           value={reg.recruiter || ""}
           onChange={handleValue}
         >
           <option value="">انتخاب کنید</option>
-          {[...Array(10)].map((_, i) => (
-            <option key={i} value={`مسئول ${i + 1}`}>
-              مسئول {i + 1}
+
+          {recruiters.map((r) => (
+            <option key={r.id} value={r.name}>
+              {r.name}
             </option>
           ))}
-          <option value="custom">وارد کردن دستی</option>
-        </select>
 
-        {reg.recruiter === "custom" && (
-          <input
-            name="recruiter"
-            placeholder="نام مسئول"
-            onChange={handleValue}
-          />
-        )}
-      </div>
+        <option value="custom">➕ وارد کردن دستی</option>
+      </select>
+
+      {reg.recruiter === "custom" && (
+        <input
+          placeholder="نام مسئول جدید"
+          onKeyDown={async (e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              const name = e.target.value.trim();
+              if (!name) return;
+
+              await addRecruiter({ name }).unwrap();
+              dispatch(updateRegistrationInfo({ recruiter: name }));
+            }
+          }}
+        />
+      )}
+    </div>
+
 
       {/* تعداد آزمون */}
       <div className="form-group">

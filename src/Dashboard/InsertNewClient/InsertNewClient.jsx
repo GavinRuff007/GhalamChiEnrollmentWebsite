@@ -2,6 +2,8 @@ import React, { useEffect, useMemo } from "react";
 import "./InsertNewClient.css";
 import cleanStep3Data from "./utils/cleanStep3Data";
 import FinalReviewStep from "./step5/FinalReviewStep";
+import { useParams, useLocation } from "react-router-dom";
+
 
 
 import { useSelector, useDispatch } from "react-redux";
@@ -15,7 +17,6 @@ import {
   clearErrors,
 } from "../../slices/formSlice";
 
-import { useParams } from "react-router-dom";
 
 import PersonalInfoStep from "./step1/PersonalInfoStep";
 import RegistrationInfoStep from "./step2/RegistrationInfoStep";
@@ -32,6 +33,8 @@ import {
 } from "../../services/apiSlice";
 
 const InsertNewClient = () => {
+  const location = useLocation();
+
   const dispatch = useDispatch();
   const { nationalCode: routeNationalCode } = useParams();
   const isEditMode = Boolean(routeNationalCode);
@@ -74,7 +77,7 @@ const InsertNewClient = () => {
   // 🌟 حالت NEW: بارگذاری اولیه از localStorage
   // ===============================================================
   useEffect(() => {
-    if (isEditMode) return; // ⛔️ در ویرایش از localStorage نخوان
+    if (isEditMode) return; 
 
     const savedPersonal = localStorage.getItem("personalInfo");
     const savedReg = localStorage.getItem("registrationInfo");
@@ -84,6 +87,20 @@ const InsertNewClient = () => {
     if (savedReg) dispatch(updateRegistrationInfo(JSON.parse(savedReg)));
     if (savedFee) dispatch(updateFeeInfo(JSON.parse(savedFee)));
   }, [dispatch, isEditMode]);
+
+  useEffect(() => {
+  // اگر رفتیم روی /dashboard (Insert Mode)
+  if (location.pathname === "/dashboard" || location.pathname === "/adminDashboard") {
+    dispatch(resetForm());
+    dispatch(clearErrors());
+    dispatch(setActiveStep(1));
+
+    localStorage.removeItem("personalInfo");
+    localStorage.removeItem("registrationInfo");
+    localStorage.removeItem("feeInfo");
+  }
+}, [location.pathname, dispatch]);
+
 
   // ===============================================================
   // 🌟 حالت EDIT: وقتی routeNationalCode تغییر کرد → فرم را ریست کن

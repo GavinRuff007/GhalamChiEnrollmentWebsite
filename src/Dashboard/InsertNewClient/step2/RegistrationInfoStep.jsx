@@ -7,6 +7,8 @@ import {
 
 import { updateRegistrationInfo } from "../../../slices/formSlice";
 
+import SeasonExamTables from "./sections/SeasonExamTables";
+
 import { useSupportCalculator } from "./hooks/useSupportCalculator";
 import { useFeeCalculator } from "./hooks/useFeeCalculator";
 
@@ -43,6 +45,9 @@ const RegistrationInfoStep = () => {
       <h3>مرحله دوم: اطلاعات ثبت‌نام</h3>
       <form className="student-form">
         <TypeSection reg={reg} errors={errors} dispatch={dispatch} />
+        
+        <SeasonExamTables reg={reg} dispatch={dispatch} />
+        
         {reg.classCount > 0 && (
           <ClassesSection reg={reg} subjects={subjects} dispatch={dispatch} />
         )}

@@ -42,13 +42,14 @@ const initialState = {
   specialSupport: false,
 
   supportInfo: {
-    supporterId: "",
-    startDate: "",
-    endDate: "",
-    dailyPrice: 0,
-    days: 0,
-    fee: 0,
+  season: "",        // SPRING | SUMMER | AUTUMN | WINTER
+  startDate: "",     // YYYY/MM/DD
+  days: "",          // number
+  endDate: "", 
+  advisorId: "",   // 👈 مشاور ویژه
+      // auto-calculated
   },
+
 
   /* ========== تخفیف‌ها ========== */
   discountExam: "",
@@ -78,7 +79,25 @@ const initialState = {
     supportInstallments: [],
     total_fee: 0
 
-  }
+  },
+
+  examSeasons: {
+  spring: [
+    { examId: "", date: "", status: "", price: "" }
+  ],
+  summer: [
+    { examId: "", date: "", status: "", price: "" }
+  ],
+  autumn: [
+    { examId: "", date: "", status: "", price: "" }
+  ],
+  winter: [
+    { examId: "", date: "", status: "", price: "" }
+  ],
+}
+
+
+
 };
 
 const formSlice = createSlice({
