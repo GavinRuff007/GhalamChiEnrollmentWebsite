@@ -24,6 +24,8 @@ const Login = () => {
 
       // 2: ذخیره AccessToken
       sessionStorage.setItem("accessToken", resp.accessToken);
+      sessionStorage.setItem("roles", JSON.stringify(resp.roles));
+
 
       toast.success("ورود با موفقیت انجام شد");
 
@@ -31,7 +33,7 @@ const Login = () => {
       setTimeout(() => {
         sessionStorage.removeItem("accessToken");
         toast.info("توکن منقضی شد.");
-      }, 5 * 60 * 1000);
+      }, 120 * 60 * 1000);
 
       // 4: انتقال بر اساس نقش
       if (resp.roles?.includes("ROLE_ADMIN")) {

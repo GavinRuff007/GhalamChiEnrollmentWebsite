@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { useGetRecordsQuery } from "../../services/apiSlice";
 import "./Records.css";
+
+
 
 const Records = () => {
   const { data: records = [], isLoading } = useGetRecordsQuery();
@@ -9,14 +11,36 @@ const Records = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
+  const { unit, year } = useParams(); 
+  // unit: girls | boys
+  // year: 1403–1404 (فعلاً برای آینده)
 
   const isAdmin = location.pathname.startsWith("/adminDashboard");
 
-  const filtered = records.filter(
-    (r) =>
+  // تعیین جنسیت بر اساس unit
+  const genderFilter =
+    unit === "girls" ? "FEMALE" :
+    unit === "boys"  ? "MALE"  :
+    null;
+
+  // فیلتر نهایی رکوردها
+  const filtered = records.filter((r) => {
+
+
+    // فیلتر جستجو
+    const matchSearch =
       r.nationalCode?.includes(search) ||
-      `${r.name} ${r.family}`.includes(search)
-  );
+      `${r.name} ${r.family}`.includes(search);
+
+    
+    console.log(r.gender)
+      // فیلتر جنسیت
+    const matchGender = genderFilter
+      ? r.gender === genderFilter
+      : true;
+
+    return matchSearch && matchGender;
+  });
 
   const handleContinue = (r) => {
     const base = isAdmin ? "/adminDashboard" : "/dashboard";
@@ -25,7 +49,14 @@ const Records = () => {
 
   return (
     <div className="records-page">
-      <h2 className="records-title">متقاضیان ثبت‌نام‌شده</h2>
+      <h2 className="records-title">
+        متقاضیان ثبت‌نام‌شده
+        {genderFilter && (
+          <span style={{ fontSize: 14, marginRight: 10 }}>
+            ({genderFilter})
+          </span>
+        )}
+      </h2>
 
       {/* 🔍 Search */}
       <div className="records-header">
@@ -71,6 +102,7 @@ const Records = () => {
             <div className="record-details">
               <p>📞 موبایل: {r.mobileNumber || "-"}</p>
               <p>📊 مراحل تکمیل‌شده: {r.completedSteps}</p>
+              <p>🚻 جنسیت: {r.gender || "-"}</p>
 
               <button
                 className="continue-btn"

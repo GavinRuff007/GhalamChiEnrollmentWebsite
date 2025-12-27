@@ -82,18 +82,18 @@ const initialState = {
   },
 
   examSeasons: {
-  spring: [
-    { examId: "", date: "", status: "", price: "" }
-  ],
-  summer: [
-    { examId: "", date: "", status: "", price: "" }
-  ],
-  autumn: [
-    { examId: "", date: "", status: "", price: "" }
-  ],
-  winter: [
-    { examId: "", date: "", status: "", price: "" }
-  ],
+      spring: [
+        { examId: "", date: "", status: "", price: "" }
+      ],
+      summer: [
+        { examId: "", date: "", status: "", price: "" }
+      ],
+      autumn: [
+        { examId: "", date: "", status: "", price: "" }
+      ],
+      winter: [
+        { examId: "", date: "", status: "", price: "" }
+      ],
 }
 
 

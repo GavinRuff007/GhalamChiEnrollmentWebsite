@@ -29,7 +29,7 @@ import {
   useSaveStep3Mutation,
   useGetStep1Query,
   useGetStep2Query,
-  useGetStep3Query, // اگر نداری حذف کن
+  useGetStep3Query,
 } from "../../services/apiSlice";
 
 const InsertNewClient = () => {
@@ -42,7 +42,6 @@ const InsertNewClient = () => {
   const { activeStep, personalInfo, registrationInfo, feeInfo, errors } =
     useSelector((state) => state.form);
 
-  // کد ملی نهایی (در حالت ویرایش از route، در حالت جدید از redux)
   const nationalCode = useMemo(() => {
     return isEditMode ? routeNationalCode : personalInfo?.nationalCode;
   }, [isEditMode, routeNationalCode, personalInfo?.nationalCode]);
@@ -112,7 +111,6 @@ const InsertNewClient = () => {
     dispatch(clearErrors());
     dispatch(setActiveStep(1));
 
-    // اینجا localStorage را هم پاک می‌کنیم تا تداخل نشود
     localStorage.removeItem("personalInfo");
     localStorage.removeItem("registrationInfo");
     localStorage.removeItem("feeInfo");

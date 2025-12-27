@@ -45,7 +45,7 @@ const AdminDashboard = () => {
     {
       key: "2",
       icon: <DatabaseOutlined />,
-      label: "اطلاعات ثبت‌شده",
+      label: "افراد ثبت نام شده",
       link: "records",
     }
   ];

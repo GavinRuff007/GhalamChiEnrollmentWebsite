@@ -1,0 +1,60 @@
+/* کل صفحه – وسط افقی، بالا عمودی */
+.year-wrapper-top {
+  min-height: calc(100vh - 70px);
+  display: flex;
+  justify-content: center;   /* وسط افقی */
+  align-items: flex-start;   /* بالا */
+  padding-top: 40px;         /* فاصله از بالا */
+}
+
+/* باکس مرکزی */
+.year-box {
+  text-align: center;
+}
+
+/* عنوان */
+.year-title {
+  color: #000000;
+  font-size: 26px;
+  margin-bottom: 24px;
+}
+
+/* لیست سال‌ها */
+.year-links {
+  display: flex;
+  gap: 28px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* لینک سال */
+.year-link {
+  font-size: 20px;
+  color: #1e88e5;
+  cursor: pointer;
+  position: relative;
+}
+
+/* افکت underline */
+.year-link::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 2px;
+  background: #1e88e5;
+  left: 0;
+  bottom: -4px;
+  transition: width 0.3s ease;
+}
+
+.year-link:hover::after {
+  width: 100%;
+}
+
+.year-link:hover {
+  color: #0d47a1;
+}
+
+.year-loading {
+  color: #1976d2;
+}

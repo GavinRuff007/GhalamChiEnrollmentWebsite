@@ -7,9 +7,10 @@ import InsertNewClient from "../Dashboard/InsertNewClient/InsertNewClient";
 import Records from "../Dashboard/Records/Records";
 import ConfigLoginSystem from "../Dashboard/configSystem(Admin)/ConfigLoginSystem";
 import Login from "../Authorization/Login";
-
+import YearSelect from "../Dashboard/Records/YearSelect";
 import ProtectedRoute, { DefaultRedirect } from "../validations/ProtectedRoute";
 import AppHeader from "../Dashboard/Appheader";
+import YearGate from "../Dashboard/Records/YearGate";
 
 import { ToastContainer } from "react-toastify";
 
@@ -40,17 +41,8 @@ function App() {
               </ProtectedRoute>
             }
           >
-            {/* ثبت جدید */}
             <Route index element={<InsertNewClient />} />
-
-            {/* ادامه / ویرایش با کد ملی */}
-            <Route
-              path="edit/:nationalCode"
-              element={<InsertNewClient />}
-            />
-
-            {/* لیست متقاضیان */}
-            <Route path="records" element={<Records />} />
+            <Route path="edit/:nationalCode" element={<InsertNewClient />} />
           </Route>
 
           {/* ===================== */}
@@ -64,20 +56,14 @@ function App() {
               </ProtectedRoute>
             }
           >
-            {/* ثبت جدید */}
             <Route index element={<InsertNewClient />} />
-
-            {/* ادامه / ویرایش با کد ملی */}
-            <Route
-              path="edit/:nationalCode"
-              element={<InsertNewClient />}
-            />
-
-            {/* تنظیمات سیستم */}
+            <Route path="edit/:nationalCode" element={<InsertNewClient />} />
             <Route path="config" element={<ConfigLoginSystem />} />
 
-            {/* لیست متقاضیان */}
-            <Route path="records" element={<Records />} />
+            {/* 🔵 ثبت‌نام‌ها (Admin Only) */}
+            <Route path="records" element={<YearSelect />} />
+            <Route path="records/:year" element={<YearGate />} />
+            <Route path="records/:year/:unit" element={<Records />} />
           </Route>
 
           {/* ===================== */}
