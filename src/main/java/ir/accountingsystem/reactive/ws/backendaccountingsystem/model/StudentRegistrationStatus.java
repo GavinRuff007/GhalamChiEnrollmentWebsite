@@ -1,5 +1,6 @@
 package ir.accountingsystem.reactive.ws.backendaccountingsystem.model;
 
+import ir.accountingsystem.reactive.ws.backendaccountingsystem.dto.Gender;
 import jakarta.persistence.*;
 import lombok.Data;
 @Data
@@ -37,6 +38,9 @@ public class StudentRegistrationStatus {
 
     @Column(name = "completed_steps")
     private Integer completedSteps = 0;
+
+    @Column(name = "gender")
+    private String gender;
 
     @Column(name = "created_at", insertable = false, updatable = false)
     private java.sql.Timestamp createdAt;

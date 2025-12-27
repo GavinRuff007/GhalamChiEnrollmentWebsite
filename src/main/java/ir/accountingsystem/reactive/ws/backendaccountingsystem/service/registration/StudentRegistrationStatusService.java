@@ -23,6 +23,7 @@ public class StudentRegistrationStatusService {
         status.setMobileNumber(info.getPhone1());
         status.setStep1Id(info.getId());
         status.setCompletedSteps(1);
+        status.setGender(info.getGender());
 
         return repo.save(status);
     }
