@@ -1,25 +1,21 @@
-/* کل صفحه – وسط افقی، بالا عمودی */
 .year-wrapper-top {
   min-height: calc(100vh - 70px);
   display: flex;
-  justify-content: center;   /* وسط افقی */
-  align-items: flex-start;   /* بالا */
-  padding-top: 40px;         /* فاصله از بالا */
+  justify-content: center;   
+  align-items: flex-start;   
+  padding-top: 40px;         
 }
 
-/* باکس مرکزی */
 .year-box {
   text-align: center;
 }
 
-/* عنوان */
 .year-title {
   color: #000000;
   font-size: 26px;
   margin-bottom: 24px;
 }
 
-/* لیست سال‌ها */
 .year-links {
   display: flex;
   gap: 28px;
@@ -27,7 +23,6 @@
   flex-wrap: wrap;
 }
 
-/* لینک سال */
 .year-link {
   font-size: 20px;
   color: #1e88e5;
@@ -35,7 +30,6 @@
   position: relative;
 }
 
-/* افکت underline */
 .year-link::after {
   content: "";
   position: absolute;

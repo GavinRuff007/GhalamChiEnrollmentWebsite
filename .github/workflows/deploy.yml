@@ -1,98 +1,97 @@
-name: Build & Deploy React (Nginx container on new port)
+name: Build & Deploy Front-end
 
 on:
   push:
-    branches: [ "main" ]  # هر بار که تغییرات به شاخه اصلی push شود، این workflow اجرا می‌شود.
+    branches: [ "main" ]  
 
 permissions:
-  contents: read  # دسترسی برای خواندن repository
-  packages: write  # دسترسی برای نوشتن به GHCR
+  contents: read  
+  packages: write 
 
 env:
-  IMAGE_NAME: react-app  # نام Docker image
-  GHCR_OWNER: gavinruff007  # صاحب image در GHCR (GitHub Container Registry)
+  IMAGE_NAME: react-app  
+  GHCR_OWNER: gavinruff007  
 
 jobs:
   build-and-push:
-    name: 🏗️ Build & Push Docker Image
-    runs-on: ubuntu-latest  # استفاده از سیستم عامل Ubuntu برای اجرای مراحل
-
+    name:  Build & Push Docker Image
+    runs-on: ubuntu-latest  
     steps:
-      - name: 🔹 Checkout repository
-        uses: actions/checkout@v4  # گام اول: چک کردن repository
+      - name:  Checkout repository
+        uses: actions/checkout@v4  
 
-      - name: 🔐 Create .env.production from secrets
+      - name:  Create .env.production from secrets
         run: |
-          echo "REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}" > .env.production  # ساخت .env.production از secrets
+          echo "REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}" > .env.production
 
-      - name: 🔹 Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3  # تنظیم ابزار Buildx برای Docker
+      - name:  Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3  
 
-      - name: 🔹 Login to GHCR (push)
-        uses: docker/login-action@v3  # ورود به GHCR برای push
+      - name:  Login to GHCR (push)
+        uses: docker/login-action@v3  
         with:
           registry: ghcr.io
           username: ${{ env.GHCR_OWNER }}
-          password: ${{ secrets.GITHUB_TOKEN }}  # استفاده از token برای احراز هویت
+          password: ${{ secrets.GITHUB_TOKEN }}  
 
-      - name: 🔹 Build & Push image (as latest)
-        uses: docker/build-push-action@v6  # گام بعدی: ساخت Docker image و push به GHCR
+      - name:  Build & Push image (as latest)
+        uses: docker/build-push-action@v6  
         with:
-          context: .  # مسیر پروژه
-          push: true  # ارسال image به registry
-          tags: ghcr.io/${{ env.GHCR_OWNER }}/${{ env.IMAGE_NAME }}:latest  # تگ کردن با آخرین نسخه
-          cache-from: type=gha  # استفاده از cache از GitHub Actions
-          cache-to: type=gha,mode=max  # ذخیره cache برای مراحل بعدی
+          context: .  
+          push: true 
+          tags: ghcr.io/${{ env.GHCR_OWNER }}/${{ env.IMAGE_NAME }}:latest 
+          cache-from: type=gha 
+          cache-to: type=gha,mode=max 
 
   deploy:
-    name: 🚀 Deploy to Server
-    runs-on: ubuntu-latest  # دوباره از Ubuntu استفاده می‌کنیم
-    needs: build-and-push  # این مرحله باید بعد از build-and-push اجرا شود
+    name:  Deploy to Server
+    runs-on: ubuntu-latest  
+    needs: build-and-push  
 
     steps:
-      - name: 🔸 SSH into server and deploy latest image
-        uses: appleboy/ssh-action@v1.2.0  # استفاده از SSH برای ورود به سرور و استقرار پروژه
+      - name:  SSH into server and deploy latest image
+        uses: appleboy/ssh-action@v1.2.0  
         with:
-          host: ${{ secrets.SSH_HOST }}  # آدرس IP یا DNS سرور
-          username: ${{ secrets.SSH_USER }}  # نام کاربری SSH
-          key: ${{ secrets.SSH_PRIVATE_KEY }}  # کلید خصوصی SSH
-          port: 9011  # پورت SSH برای اتصال به سرور
+          host: ${{ secrets.SSH_HOST }}  
+          username: ${{ secrets.SSH_USER }}  
+          key: ${{ secrets.SSH_PRIVATE_KEY }}  
+          port: 9011  
           script: |
             set -e
 
-            echo "🔐 Logging in to GHCR..."
+            echo " Logging in to GHCR..."
             echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io -u "gavinruff007" --password-stdin  # ورود به GHCR برای کشیدن image
 
-            echo "📂 Changing directory to /home/deploy/react-app..."
-            cd /home/deploy/react-app || { echo "❌ Directory not found!"; exit 1; }
+            echo " Changing directory to /home/deploy/react-app..."
+            cd /home/deploy/react-app || { echo " Directory not found!"; exit 1; }
 
-            echo "🔍 Checking for docker-compose.yml..."
+            echo " Checking for docker-compose.yml..."
             if [ ! -f docker-compose.yml ]; then
-              echo "❌ docker-compose.yml not found in /home/deploy/react-app"
+              echo " docker-compose.yml not found in /home/deploy/react-app"
               exit 1
             fi
 
-            echo "📝 Ensuring lowercase GHCR path..."
-            sed -i 's#ghcr.io/.*/react-app:.*#ghcr.io/gavinruff007/react-app:latest#g' docker-compose.yml  # به‌روزرسانی path در فایل docker-compose
+            echo " Ensuring lowercase GHCR path..."
+            sed -i 's#ghcr.io/.*/react-app:.*#ghcr.io/gavinruff007/react-app:latest#g' docker-compose.yml  
 
-            echo "⚙️ Detecting Docker Compose command..."
+            echo " Detecting Docker Compose command..."
             if docker compose version >/dev/null 2>&1; then
-              COMPOSE="docker compose"  # اگر Docker Compose نصب است
+              COMPOSE="docker compose"  
             elif command -v docker-compose >/dev/null 2>&1; then
-              COMPOSE="docker-compose"  # اگر نسخه قدیمی Docker Compose نصب است
+              COMPOSE="docker-compose"  
             else
-              echo "❌ Docker Compose not installed! Install it with:"
+              echo " Docker Compose not installed! Install it with:"
               echo "sudo apt install docker-compose -y"
               exit 1
             fi
 
-            echo "⬇️ Pulling latest image..."
-            $COMPOSE pull  # کشیدن آخرین نسخه Docker image از GHCR
+            echo " Pulling latest image..."
+            $COMPOSE pull  
 
-            echo "🚀 Starting container..."
-            $COMPOSE up -d  # راه‌اندازی container به صورت detached
+            echo " Starting container..."
+            $COMPOSE up -d  
 
             echo "🧹 Cleaning up old images..."
-            docker image prune -af --filter "until=24h" || true  # حذف تصاویر قدیمی Docker
+            docker image prune -af --filter "until=24h" || true 
 
-            echo "✅ Deployment completed successfully!"  # پیام موفقیت استقرار
+            echo " Deployment completed successfully!"  

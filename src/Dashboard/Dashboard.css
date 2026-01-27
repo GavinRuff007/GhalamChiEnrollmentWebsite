@@ -1,11 +1,9 @@
-/* ====== فونت وزیری ====== */
 @import url("https://cdn.jsdelivr.net/gh/rastikerdar/vazir-font@v30.1.0/dist/font-face.css");
 
 body, * {
   font-family: "Vazir", sans-serif !important;
 }
 
-/* ====== تنظیمات ظاهری ====== */
 .logo {
   font-family: "Vazir", sans-serif;
 }
@@ -18,15 +16,13 @@ body, * {
   font-family: "Vazir", sans-serif;
 }
 
-/* ===== اصلاح Tooltip برای حالت جمع‌شده‌ی سایدبار در تم روشن ===== */
 .ant-tooltip-inner {
-  background-color: #1677ff !important; /* آبی هماهنگ با تم */
-  color: #fff !important; /* متن سفید */
+  background-color: #1677ff !important; 
+  color: #fff !important; 
   font-family: "Vazir", sans-serif !important;
   font-size: 13px;
 }
 
-/* مثلث کوچک Tooltip */
 .ant-tooltip-arrow::before {
   background-color: #1677ff !important;
 }

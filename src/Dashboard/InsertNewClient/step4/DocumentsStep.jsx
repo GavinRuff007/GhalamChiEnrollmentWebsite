@@ -17,7 +17,6 @@ const DocumentsStep = ({ uploadedFiles, setUploadedFiles }) => {
       <h3>مرحله چهارم: مدارک مستند</h3>
       <p>در این مرحله فایل‌های مربوط به مدارک را آپلود کنید.</p>
 
-      {/* بخش آپلود */}
       <div className="upload-section">
         <label
           htmlFor="fileUpload"
@@ -43,7 +42,6 @@ const DocumentsStep = ({ uploadedFiles, setUploadedFiles }) => {
         />
       </div>
 
-      {/* لیست فایل‌های آپلودشده */}
       {uploadedFiles?.length > 0 && (
         <div
           className="uploaded-files"

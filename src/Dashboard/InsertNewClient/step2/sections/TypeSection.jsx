@@ -35,7 +35,6 @@ const TypeSection = ({ reg, errors, dispatch }) => {
   return (
     <div className="form-grid">
 
-      {/* نوع ثبت‌نام */}
       <div className="form-group">
         <label>
           نوع <span className="required">*</span>
@@ -61,7 +60,6 @@ const TypeSection = ({ reg, errors, dispatch }) => {
         {errors.typeOption && <p className="error-text">{errors.typeOption}</p>}
       </div>
 
-      {/* مسئول جذب */}
       <div className="form-group">
         <label>مسئول جذب</label>
 
@@ -99,7 +97,6 @@ const TypeSection = ({ reg, errors, dispatch }) => {
     </div>
 
 
-      {/* تعداد آزمون */}
       <div className="form-group">
         <label>تعداد آزمون</label>
         <select
@@ -118,7 +115,6 @@ const TypeSection = ({ reg, errors, dispatch }) => {
         </select>
       </div>
 
-      {/* بن کتاب */}
       <div className="form-group">
         <label>بن کتاب</label>
         <select
@@ -132,7 +128,6 @@ const TypeSection = ({ reg, errors, dispatch }) => {
         </select>
       </div>
 
-      {/* تخفیف آزمون */}
       <div className="form-group">
         <label>تخفیف آزمون</label>
         <input
@@ -142,7 +137,6 @@ const TypeSection = ({ reg, errors, dispatch }) => {
         />
       </div>
 
-      {/* تخفیف کلاس */}
       <div className="form-group">
         <label>تخفیف کلاس</label>
         <input

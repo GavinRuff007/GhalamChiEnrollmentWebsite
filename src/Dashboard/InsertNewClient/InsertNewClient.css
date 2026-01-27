@@ -8,7 +8,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 180px; /* 👈 افزایش فاصله بین دایره‌ها */
+  gap: 180px; 
   margin-bottom: 40px;
   flex-wrap: wrap;
 }
@@ -48,8 +48,8 @@
 .line {
   position: absolute;
   top: 35px;
-  right: -120px; /* 👈 هماهنگ با فاصله جدید */
-  width: 220px; /* 👈 طول خط بین دایره‌ها */
+  right: -120px; 
+  width: 220px; 
   height: 3px;
   background: #ccc;
   z-index: -1;
@@ -251,10 +251,10 @@ select.error {
   margin-top: 4px;
   display: block;
 }
-/* استایل هماهنگ برای input تقویم */
+
 .custom-input {
   width: 100%;
-  height: 38px; /* ارتفاع مثل بقیه input ها */
+  height: 38px; 
   border: 1px solid #ccc;
   border-radius: 8px;
   padding: 8px 12px;
@@ -268,7 +268,7 @@ select.error {
 
 .custom-input:focus {
   outline: none;
-  border-color: #1677ff; /* آبی مثل بقیه فیلدها */
+  border-color: #1677ff; 
   box-shadow: 0 0 4px rgba(22, 119, 255, 0.3);
 }
 

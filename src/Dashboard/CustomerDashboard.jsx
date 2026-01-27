@@ -66,7 +66,6 @@ const CustomerDashboard = () => {
           fontFamily: "Vazir, sans-serif",
         }}
       >
-        {/* Sidebar */}
         <Sider
           collapsible
           collapsed={collapsed}
@@ -102,8 +101,8 @@ const CustomerDashboard = () => {
       label: (
         <span
           onClick={() => {
-            dispatch(resetForm());     // 🔥 ریست فرم
-            navigate("/dashboard");    // 🔥 رفتن به ثبت جدید
+            dispatch(resetForm());     
+            navigate("/dashboard");   
           }}
         >
           ثبت اطلاعات جدید
@@ -120,7 +119,6 @@ const CustomerDashboard = () => {
 
         </Sider>
 
-        {/* Main Layout */}
         <Layout className="site-layout">
           <Header
             className="site-layout-background"
@@ -157,7 +155,6 @@ const CustomerDashboard = () => {
               boxShadow: "0 0 8px rgba(0,0,0,0.1)",
             }}
           >
-            {/* Outlet برای صفحات داخلی */}
             <Outlet />
           </Content>
         </Layout>

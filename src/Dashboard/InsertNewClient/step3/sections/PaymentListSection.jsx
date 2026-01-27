@@ -6,7 +6,6 @@ const PaymentListSection = ({ payments, addPayment, updatePayment }) => (
       + افزودن روش پرداخت
     </button>
 
-    {/* فقط یک GRID */}
     <div className="payment-grid">
       {payments.map((p, i) => (
         <PaymentItem

@@ -45,7 +45,6 @@ const SeasonExamTables = ({ reg, dispatch }) => {
 
   if (!reg.examCount || reg.examCount === "none") return null;
 
-  // ✅ آپدیت یک‌مرحله‌ای هر سطر
   const updateRow = (season, index, updatedFields) => {
     const rows = [...(reg.examSeasons?.[season] || [{ ...emptyRow }])];
 
@@ -160,7 +159,6 @@ const SeasonExamTables = ({ reg, dispatch }) => {
                 <tbody>
                   {rows.map((row, i) => (
                     <tr key={i}>
-                      {/* تاریخ آزمون */}
                       <td style={tdStyle}>
                         <select
                           value={row.examId}
@@ -187,7 +185,6 @@ const SeasonExamTables = ({ reg, dispatch }) => {
                         </select>
                       </td>
 
-                      {/* وضعیت */}
                       <td style={{ ...tdStyle, paddingTop: 10 }}>
                         <div
                           style={{
@@ -227,7 +224,6 @@ const SeasonExamTables = ({ reg, dispatch }) => {
                         </div>
                       </td>
 
-                      {/* هزینه */}
                       <td style={{ ...tdStyle, textAlign: "center" }}>
                         <input
                           type="text"
@@ -245,7 +241,6 @@ const SeasonExamTables = ({ reg, dispatch }) => {
                         />
                       </td>
 
-                      {/* حذف */}
                       <td style={{ ...tdStyle, textAlign: "center" }}>
                         <button
                           type="button"
@@ -268,7 +263,6 @@ const SeasonExamTables = ({ reg, dispatch }) => {
                     </tr>
                   ))}
 
-                  {/* افزودن سطر */}
                   <tr>
                     <td colSpan={4} style={{ textAlign: "center" }}>
                       <button

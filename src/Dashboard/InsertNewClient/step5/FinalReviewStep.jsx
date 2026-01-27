@@ -11,9 +11,6 @@ const FinalReviewStep = () => {
     <div className="next-page final-review">
       <h3>مرحله پنجم: بررسی نهایی اطلاعات</h3>
 
-      {/* ===================== */}
-      {/* Step 1: Personal Info */}
-      {/* ===================== */}
       <section className="review-box">
         <h4>👤 اطلاعات شخصی</h4>
         <div className="review-grid">
@@ -27,9 +24,6 @@ const FinalReviewStep = () => {
         </div>
       </section>
 
-      {/* ========================== */}
-      {/* Step 2: Registration Info */}
-      {/* ========================== */}
       <section className="review-box">
         <h4>📚 اطلاعات ثبت‌نام</h4>
         <div className="review-grid">
@@ -51,9 +45,6 @@ const FinalReviewStep = () => {
         </div>
       </section>
 
-      {/* ===================== */}
-      {/* Step 3: Fee Info */}
-      {/* ===================== */}
       <section className="review-box">
         <h4>💰 اطلاعات شهریه</h4>
 
@@ -88,9 +79,6 @@ const FinalReviewStep = () => {
         </div>
       </section>
 
-      {/* ===================== */}
-      {/* Step 4: Documents */}
-      {/* ===================== */}
       <section className="review-box">
         <h4>📎 مدارک بارگذاری‌شده</h4>
         <p className="hint">
@@ -98,9 +86,6 @@ const FinalReviewStep = () => {
         </p>
       </section>
 
-      {/* ===================== */}
-      {/* Final Warning */}
-      {/* ===================== */}
       <div className="final-warning">
         ⚠️ لطفاً قبل از تأیید نهایی، صحت تمام اطلاعات را بررسی کنید.
       </div>

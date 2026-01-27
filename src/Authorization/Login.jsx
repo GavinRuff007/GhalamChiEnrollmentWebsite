@@ -14,7 +14,6 @@ const Login = () => {
     const { username, password } = values;
 
     try {
-      // 1: فراخوانی login از طریق RTK Query
       const resp = await loginUser({ username, password }).unwrap();
 
       if (resp.state !== "OK") {
@@ -22,20 +21,17 @@ const Login = () => {
         return;
       }
 
-      // 2: ذخیره AccessToken
       sessionStorage.setItem("accessToken", resp.accessToken);
       sessionStorage.setItem("roles", JSON.stringify(resp.roles));
 
 
       toast.success("ورود با موفقیت انجام شد");
 
-      // 3: انقضای خودکار توکن بعد از 5 دقیقه
       setTimeout(() => {
         sessionStorage.removeItem("accessToken");
         toast.info("توکن منقضی شد.");
       }, 120 * 60 * 1000);
 
-      // 4: انتقال بر اساس نقش
       if (resp.roles?.includes("ROLE_ADMIN")) {
         navigate("/adminDashboard");
       } else {

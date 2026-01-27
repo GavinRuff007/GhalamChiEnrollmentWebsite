@@ -36,26 +36,21 @@ const initialState = {
 
   subjectList: [],
 
-  /* ============================
-     پشتیبانی ویژه — جدید و صحیح
-  ============================ */
+
   specialSupport: false,
 
   supportInfo: {
-  season: "",        // SPRING | SUMMER | AUTUMN | WINTER
-  startDate: "",     // YYYY/MM/DD
-  days: "",          // number
+  season: "",        
+  startDate: "",     
+  days: "",          
   endDate: "", 
-  advisorId: "",   // 👈 مشاور ویژه
-      // auto-calculated
+  advisorId: "",   
   },
 
 
-  /* ========== تخفیف‌ها ========== */
   discountExam: "",
   discountClass: "",
 
-  /* ========== پشتیبانی فصلی (قدیمی) ========== */
   summerSupportFeeOption: "",
   summerSupportFee: "",
   fallSupportFeeOption: "",

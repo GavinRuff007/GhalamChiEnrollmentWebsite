@@ -1,6 +1,6 @@
 const cleanStep3Data = (info, nationalCode) => {
   return {
-    nationalCode,  // مقدار صحیح از Step1
+    nationalCode,  
 
     classInitialFee: info.classInitialFee || null,
     installment: info.installment || null,

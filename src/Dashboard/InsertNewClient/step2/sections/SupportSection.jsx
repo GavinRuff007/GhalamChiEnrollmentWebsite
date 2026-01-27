@@ -6,15 +6,11 @@ import persian_fa from "react-date-object/locales/persian_fa";
 import { updateRegistrationInfo } from "../../../../slices/formSlice";
 import "./SupportSection.css";
 
-/* =======================
-   Helpers
-======================= */
+
 const toEnglishDigits = (str = "") =>
   str.replace(/[۰-۹]/g, (d) => "۰۱۲۳۴۵۶۷۸۹".indexOf(d));
 
-/* =======================
-   Constants
-======================= */
+
 const seasons = [
   { key: "SPRING", label: "بهار" },
   { key: "SUMMER", label: "تابستان" },
@@ -36,16 +32,13 @@ const emptySupport = {
   startDate: "",
 };
 
-/* =======================
-   Component
-======================= */
+
 const SupportSection = ({ reg, supporters, dispatch }) => {
   const list =
     reg.supportInfoList && reg.supportInfoList.length
       ? reg.supportInfoList
       : [emptySupport];
 
-  /* ---------- CRUD ---------- */
   const updateRow = (index, fields) => {
     const rows = [...list];
     rows[index] = { ...rows[index], ...fields };
@@ -67,7 +60,6 @@ const SupportSection = ({ reg, supporters, dispatch }) => {
     dispatch(updateRegistrationInfo({ supportInfoList: rows }));
   };
 
-  /* ---------- Date helpers ---------- */
   const getSeasonMinMax = (season, year) => {
     if (!season || !year) return {};
     const r = seasonRanges[season];
@@ -109,13 +101,10 @@ const SupportSection = ({ reg, supporters, dispatch }) => {
   };
 
 
-  /* =======================
-     Render
-  ======================= */
+
   return (
     <>
       <hr />
-      {/* Header */}
       <div className="support-header">
         <label className="support-title">
           پشتیبانی ویژه
@@ -153,7 +142,6 @@ const SupportSection = ({ reg, supporters, dispatch }) => {
 
           return (
             <div key={i} className="support-grid-row">
-              {/* Advisor */}
               <div className="form-group">
                 <label>مشاور ویژه</label>
                 <select
@@ -182,7 +170,6 @@ const SupportSection = ({ reg, supporters, dispatch }) => {
                 </select>
               </div>
 
-              {/* Season */}
               <div className="form-group">
                 <label>فصل</label>
                 <select
@@ -205,7 +192,6 @@ const SupportSection = ({ reg, supporters, dispatch }) => {
                 </select>
               </div>
 
-              {/* Start date */}
               <div className="form-group">
                 <label>تاریخ شروع</label>
                 <DatePicker
@@ -224,7 +210,6 @@ const SupportSection = ({ reg, supporters, dispatch }) => {
                 />
               </div>
 
-              {/* Summary */}
               <div className="support-summary-box">
                 <strong>خلاصه</strong>
 
@@ -264,7 +249,6 @@ const SupportSection = ({ reg, supporters, dispatch }) => {
                 )}
               </div>
 
-              {/* Remove */}
               <div className="support-remove">
                 <button
                   type="button"

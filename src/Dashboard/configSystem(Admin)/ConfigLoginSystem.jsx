@@ -7,11 +7,8 @@ const ConfigLoginSystem = () => {
     <div className="config-container">
       <h2 className="title">تنظیمات سیستم ثبت‌نام</h2>
 
-      {/* بخش مسئول جذب */}
       <RecruiterConfigSection />
 
-      {/* اینجا بعداً می‌توانی بخش‌های تنظیماتی دیگر اضافه کنی */}
-      {/* <OtherConfigSection /> */}
     </div>
   );
 };

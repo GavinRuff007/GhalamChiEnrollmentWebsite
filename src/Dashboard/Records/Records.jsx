@@ -12,29 +12,24 @@ const Records = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { unit, year } = useParams(); 
-  // unit: girls | boys
-  // year: 1403–1404 (فعلاً برای آینده)
+
 
   const isAdmin = location.pathname.startsWith("/adminDashboard");
 
-  // تعیین جنسیت بر اساس unit
   const genderFilter =
     unit === "girls" ? "FEMALE" :
     unit === "boys"  ? "MALE"  :
     null;
 
-  // فیلتر نهایی رکوردها
   const filtered = records.filter((r) => {
 
 
-    // فیلتر جستجو
     const matchSearch =
       r.nationalCode?.includes(search) ||
       `${r.name} ${r.family}`.includes(search);
 
     
     console.log(r.gender)
-      // فیلتر جنسیت
     const matchGender = genderFilter
       ? r.gender === genderFilter
       : true;
@@ -58,7 +53,6 @@ const Records = () => {
         )}
       </h2>
 
-      {/* 🔍 Search */}
       <div className="records-header">
         <div className="search-box">
           <input
@@ -71,7 +65,6 @@ const Records = () => {
         </div>
       </div>
 
-      {/* 📦 Records */}
       <div className="records-container">
         {isLoading && <p>در حال بارگذاری...</p>}
 

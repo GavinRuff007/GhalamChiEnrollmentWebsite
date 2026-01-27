@@ -3,17 +3,14 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useGetRecordsQuery } from "../../services/apiSlice";
 import "./YearSelect.css";
 
-// تبدیل میلادی به سال تحصیلی شمسی (بدون کتابخانه)
 const getAcademicYear = (createdAt) => {
   const date = new Date(createdAt);
 
   const gy = date.getFullYear();
   const gm = date.getMonth() + 1;
 
-  // تقریب سال شمسی
   const jy = gy - 621;
 
-  // مهر ≈ اکتبر
   if (gm >= 10) {
     return `${jy + 1}–${jy + 2}`;
   }

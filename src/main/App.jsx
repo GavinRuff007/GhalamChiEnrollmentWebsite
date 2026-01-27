@@ -25,14 +25,9 @@ function App() {
         <AppHeader />
 
         <Routes>
-          {/* ===================== */}
-          {/* 🔐 Login */}
-          {/* ===================== */}
+
           <Route path="/login" element={<Login />} />
 
-          {/* ===================== */}
-          {/* 👤 User Dashboard */}
-          {/* ===================== */}
           <Route
             path="/dashboard"
             element={
@@ -45,9 +40,6 @@ function App() {
             <Route path="edit/:nationalCode" element={<InsertNewClient />} />
           </Route>
 
-          {/* ===================== */}
-          {/* 👑 Admin Dashboard */}
-          {/* ===================== */}
           <Route
             path="/adminDashboard"
             element={
@@ -60,20 +52,14 @@ function App() {
             <Route path="edit/:nationalCode" element={<InsertNewClient />} />
             <Route path="config" element={<ConfigLoginSystem />} />
 
-            {/* 🔵 ثبت‌نام‌ها (Admin Only) */}
             <Route path="records" element={<YearSelect />} />
             <Route path="records/:year" element={<YearGate />} />
             <Route path="records/:year/:unit" element={<Records />} />
           </Route>
 
-          {/* ===================== */}
-          {/* 🔁 Default Redirect */}
-          {/* ===================== */}
+
           <Route path="/" element={<DefaultRedirect />} />
 
-          {/* ===================== */}
-          {/* ❌ 404 */}
-          {/* ===================== */}
           <Route
             path="*"
             element={

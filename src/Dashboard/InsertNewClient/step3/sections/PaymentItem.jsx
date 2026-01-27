@@ -9,7 +9,6 @@ const PaymentItem = ({ p, index, updatePayment }) => {
     <div className="payment-box">
       <h4>روش پرداخت {index + 1}</h4>
 
-      {/* نوع پرداخت */}
       <div className="form-group">
         <label>نوع پرداخت</label>
         <select
@@ -24,7 +23,6 @@ const PaymentItem = ({ p, index, updatePayment }) => {
         </select>
       </div>
 
-      {/* مبلغ */}
       <div className="form-group">
         <label>مبلغ (تومان)</label>
         <input
@@ -38,7 +36,6 @@ const PaymentItem = ({ p, index, updatePayment }) => {
         />
       </div>
 
-      {/* تاریخ‌ها */}
       {p.type !== "" && p.type !== "پرداخت نقدی" && (
         <>
           <div className="form-group">

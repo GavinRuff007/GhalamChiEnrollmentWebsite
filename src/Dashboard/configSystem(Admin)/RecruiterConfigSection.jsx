@@ -32,7 +32,6 @@ const RecruiterConfigSection = () => {
     <>
       <div className="content">
 
-        {/* ➕ افزودن مسئول جذب */}
         <div className="card">
           <h3 className="section-title">مسئول جذب</h3>
           <div className="divider"></div>
@@ -51,7 +50,6 @@ const RecruiterConfigSection = () => {
           {error && <p className="error">{error}</p>}
         </div>
 
-        {/* 📋 لیست مسئولان جذب */}
         <div className="card">
           <h3 className="section-title">مسئول جذب</h3>
           <div className="divider"></div>
@@ -80,7 +78,6 @@ const RecruiterConfigSection = () => {
 
       </div>
 
-      {/* فاصله با بخش بعد */}
       <br />
     </>
   );
