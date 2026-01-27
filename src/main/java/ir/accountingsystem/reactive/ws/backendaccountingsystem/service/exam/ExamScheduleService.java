@@ -18,9 +18,6 @@ public class ExamScheduleService {
 
     private final ExamScheduleRepository repository;
 
-    // ========================
-    // GET
-    // ========================
     public List<ExamScheduleResponse> getAll() {
         return repository.findByActiveTrueOrderByExamDateAsc()
                 .stream()
@@ -28,12 +25,8 @@ public class ExamScheduleService {
                 .toList();
     }
 
-    // ========================
-    // POST
-    // ========================
     public ExamScheduleResponse create(ExamScheduleRequest request) {
 
-        // 🔁 شمسی → میلادی
         LocalDate gregorianDate =
                 PersianDate.parse(request.getDate()).toGregorian();
 
@@ -46,9 +39,6 @@ public class ExamScheduleService {
         return toResponse(saved);
     }
 
-    // ========================
-    // Mapper
-    // ========================
     private ExamScheduleResponse toResponse(ExamSchedule exam) {
 
         PersianDate persianDate =
@@ -56,27 +46,25 @@ public class ExamScheduleService {
 
         return new ExamScheduleResponse(
                 exam.getId(),
-                persianDate.toString(),           // 👈 yyyy-MM-dd شمسی
+                persianDate.toString(),           
                 exam.getPrice(),
                 resolveSeason(persianDate)
         );
     }
 
-    // ========================
-    // Season by SHAMSI month
-    // ========================
+ 
     private Season resolveSeason(PersianDate date) {
         int month = date.getMonthValue();
 
         if (month >= 1 && month <= 3) {
-            return Season.SPRING;   // فروردین تا خرداد
+            return Season.SPRING;   
         }
         if (month >= 4 && month <= 6) {
-            return Season.SUMMER;   // تیر تا شهریور
+            return Season.SUMMER;   
         }
         if (month >= 7 && month <= 9) {
-            return Season.AUTUMN;   // مهر تا آذر
+            return Season.AUTUMN;   
         }
-        return Season.WINTER;       // دی تا اسفند
+        return Season.WINTER;      
     }
 }

@@ -11,9 +11,6 @@ import java.time.LocalDate;
 @Setter
 public class ExamScheduleRequest {
 
-    /**
-     * تاریخ شمسی - مثال: 1404-09-10
-     */
     @NonNull
     private String date;
 

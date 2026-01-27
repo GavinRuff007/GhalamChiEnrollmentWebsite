@@ -37,7 +37,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 username = jwtTokenProvider.getUsername(token);
             }
         } catch (Exception ex) {
-            System.out.println("❌ JWT Parse Error: " + ex.getMessage());
+            System.out.println("JWT Parse Error: " + ex.getMessage());
         }
 
         if (username != null &&

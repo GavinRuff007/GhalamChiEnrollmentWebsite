@@ -20,7 +20,6 @@ public class ExamSchedule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // تاریخ میلادی (internal)
     @Column(nullable = false)
     private LocalDate examDate;
 

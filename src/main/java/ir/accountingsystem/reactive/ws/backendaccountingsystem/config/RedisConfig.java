@@ -28,7 +28,6 @@ public class RedisConfig {
         mapper.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL);
         serializer.setObjectMapper(mapper);
 
-        // Key → String
         template.setKeySerializer(new StringRedisSerializer());
         template.setValueSerializer(serializer);
 

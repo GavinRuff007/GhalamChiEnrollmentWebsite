@@ -43,7 +43,6 @@ public class AuthController {
                 .sameSite("Lax")
                 .build();
         response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
-        System.out.println("✅ Cookie Set: " + cookie.toString());
         UserModel userModel = userRepository.findByUsername(request.get("username")).orElseThrow();
         List<String> roles = userModel.getRoleModels().stream().map(RoleModel::getName).toList();
         return ResponseEntity.ok(Map.of(

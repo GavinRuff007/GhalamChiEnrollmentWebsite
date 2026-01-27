@@ -20,10 +20,8 @@ public class SupporterService {
     private final SpecialSupporterRepository supporterRepository;
     private final SupporterDailyFeeRepository dailyFeeRepository;
 
-    // INSERT Service
     public void insertSupporterWithFee(SupporterInsertRequest request) {
 
-        // ذخیره پشتیبان
         SpecialSupporter supporter = new SpecialSupporter();
         supporter.setFullName(request.getFullName());
         supporter.setNationalCode(request.getNationalCode());
@@ -31,7 +29,6 @@ public class SupporterService {
 
         supporter = supporterRepository.save(supporter);
 
-        // ذخیره هزینه روزانه
         SupporterDailyFee fee = new SupporterDailyFee();
         fee.setSupporterId(supporter.getId());
         fee.setDailyPrice(request.getDailyPrice());

@@ -15,13 +15,11 @@ public class RecruiterController {
 
     private final RecruiterService service;
 
-    // 🔹 GET list
     @GetMapping
     public List<Recruiter> list() {
         return service.findAll();
     }
 
-    // 🔹 POST add
     @PostMapping
     public Recruiter add(@RequestBody RecruiterRequest request) {
         return service.add(request.getName());

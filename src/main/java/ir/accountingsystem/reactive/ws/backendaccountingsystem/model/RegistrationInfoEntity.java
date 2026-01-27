@@ -40,7 +40,6 @@ public class RegistrationInfoEntity {
     private Integer bookFee;
     private Integer totalFee;
 
-    // ------------------------ DTO → Entity ------------------------
     public static RegistrationInfoEntity fromDto(RegistrationInfo dto) {
         RegistrationInfoEntity e = new RegistrationInfoEntity();
 
@@ -74,7 +73,6 @@ public class RegistrationInfoEntity {
         return e;
     }
 
-    // ------------------------ Entity → DTO ------------------------
     public RegistrationInfo toDto() {
         RegistrationInfo d = new RegistrationInfo();
 

@@ -16,17 +16,11 @@ public class ExamScheduleController {
 
     private final ExamScheduleService service;
 
-    /**
-     * GET - دریافت تمام آزمون‌ها
-     */
     @GetMapping
     public List<ExamScheduleResponse> getAllExams() {
         return service.getAll();
     }
 
-    /**
-     * POST - ایجاد آزمون جدید
-     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ExamScheduleResponse createExam(

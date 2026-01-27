@@ -26,8 +26,8 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
         String body = new String(wrappedRequest.getCachedBody(), request.getCharacterEncoding());
 
         System.out.println("======================================");
-        System.out.println("📥 Incoming Request: " + request.getMethod() + " " + request.getRequestURI());
-        System.out.println("📦 Request Body:");
+        System.out.println("Incoming Request: " + request.getMethod() + " " + request.getRequestURI());
+        System.out.println("Request Body:");
         System.out.println(body);
         System.out.println("======================================");
 
