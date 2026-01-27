@@ -1,7 +1,7 @@
 package ir.accountingsystem.reactive.ws.backendaccountingsystem.util;
 
-import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 
 
 @Component
@@ -59,7 +60,7 @@ public class JwtTokenProvider {
     public String generateRefreshToken(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Date now = new Date();
-        Date expiry = new Date(now.getTime() + refreshValidityInMs);  // اعتبار طولانی‌تر
+        Date expiry = new Date(now.getTime() + refreshValidityInMs);  
 
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
@@ -71,4 +72,17 @@ public class JwtTokenProvider {
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), SignatureAlgorithm.HS256)
                 .compact();
     }
+    public String generateTokenFromUsername(String username, List<String> roles) {
+        Date now = new Date();
+        Date expiry = new Date(now.getTime() + validityInMs); 
+
+        return Jwts.builder()
+                .setSubject(username)
+                .claim("roles", roles)
+                .setIssuedAt(now)
+                .setExpiration(expiry)
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
 }
