@@ -1,70 +1,173 @@
-# Getting Started with Create React App
+# 🎓 EduAccountingWebsite
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 📌 Project Overview
 
-## Available Scripts
+**EduAccountingWebsite** is a full-stack educational management system
+designed to efficiently manage registered students.
 
-In the project directory, you can run:
+The system allows administrators to manage:
 
-### `npm start`
+-   👨‍🎓 Student Information\
+-   📝 Registrations\
+-   📚 Courses & Classes\
+-   💳 Payments\
+-   📊 Reports & Statistics
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+This platform centralizes academic accounting operations in a secure,
+scalable, and high-performance architecture.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+------------------------------------------------------------------------
 
-### `npm test`
+## 🏗️ Architecture
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The project follows a Full-Stack Architecture with clearly separated
+front-end and back-end services.
 
-### `npm run build`
+-   Frontend: React.js + Redux Toolkit
+-   Backend: Spring Boot
+-   Database: MySQL
+-   Cache & Session: Redis
+-   Reverse Proxy: Nginx
+-   Authentication: JWT
+-   Containerization: Docker
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+------------------------------------------------------------------------
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# 🖥️ Frontend (React)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### ⚛ React.js
 
-### `npm run eject`
+A modern JavaScript library for building interactive user interfaces.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Used for: - Dynamic pages - Admin dashboards - Forms - Student
+management panels
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### 🧠 Redux Toolkit
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Centralized state management for: - User authentication state - Student
+lists - Filters - Global application state
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### 🎨 Ant Design
 
-## Learn More
+Professional UI component library used for: - Tables - Forms - Modals -
+Layout - Dashboard components
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+------------------------------------------------------------------------
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+# 🔙 Backend (Spring Boot)
 
-### Code Splitting
+### 🚀 Spring Boot
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Backend framework responsible for: - RESTful APIs - Business Logic -
+Database integration - Validation - Security configuration
 
-### Analyzing the Bundle Size
+### 🔐 Spring Security + JWT
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Authentication and authorization using: - JSON Web Tokens (JWT) -
+Role-based access control - Secure API endpoints
 
-### Making a Progressive Web App
+### 🗄️ JPA (Java Persistence API)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Used for: - CRUD operations - Entity management - Clean database
+abstraction layer
 
-### Advanced Configuration
+### ⚡ Redis
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+In-memory database used for: - Caching - Session management - Reducing
+database load - Improving performance
 
-### Deployment
+### 🐬 MySQL
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Relational database storing: - Students - Courses - Payments -
+Registrations - Admin data
 
-### `npm run build` fails to minify
+------------------------------------------------------------------------
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+# 🌐 Infrastructure & Deployment
+
+### 🔁 Nginx
+
+Used as: - Reverse proxy - Request router - Static file server - Load
+balancer (if scaled)
+
+### 🐳 Docker
+
+Containerized services for: - Backend - Frontend - Redis - MySQL
+
+Ensures: - Environment consistency - Easy deployment - Scalability
+
+------------------------------------------------------------------------
+
+# 🔐 Authentication Flow
+
+1.  User logs in.
+2.  Server validates credentials.
+3.  JWT token is generated.
+4.  Token is sent to client.
+5.  All future requests include the JWT token.
+6.  Spring Security validates the token on each request.
+
+------------------------------------------------------------------------
+
+# 📂 Project Structure (High-Level)
+
+    EduAccountingWebsite/
+    │
+    ├── frontend/        # React + Redux Toolkit
+    ├── backend/         # Spring Boot Application
+    ├── nginx/           # Nginx configuration
+    ├── docker-compose.yml
+    ├── SET_UP.txt
+    └── ADMIN_SQL.txt
+
+------------------------------------------------------------------------
+
+# ⚙️ Setup Instructions
+
+Complete setup guide is available in:
+
+docs/SET_UP.txt
+
+Includes: - Docker setup - Database configuration - Environment
+variables - Running services
+
+------------------------------------------------------------------------
+
+# 🛠️ SQL Administration Guide
+
+SQL management and control guide:
+
+docs/ADMIN_SQL.txt
+
+Includes: - Database structure - Manual queries - Admin control
+operations
+
+------------------------------------------------------------------------
+
+# ✨ Key Features
+
+-   Secure JWT-based authentication
+-   Role-based access control
+-   Student & Course management
+-   Payment tracking
+-   Dashboard analytics
+-   Optimized performance using Redis
+-   Containerized deployment
+-   Clean MVC architecture
+-   Scalable infrastructure
+
+------------------------------------------------------------------------
+
+# 📈 Performance & Scalability
+
+-   Redis caching reduces database pressure
+-   Nginx handles routing and static serving
+-   Docker enables horizontal scaling
+-   Stateless JWT authentication improves scalability
+
+------------------------------------------------------------------------
+
+# 🧑‍💻 Author
+
+Developed as a Full-Stack Educational Accounting System using modern
+enterprise technologies.
