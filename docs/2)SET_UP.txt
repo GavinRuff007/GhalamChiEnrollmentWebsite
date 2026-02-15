@@ -1,0 +1,261 @@
+README.txt — Project Setup Guide (EduAccountingWebsite)
+
+------------------------------------------------------------
+1) Prerequisites (Install in order)
+------------------------------------------------------------
+
+Before running the project, install the following tools:
+
+1. Visual Studio Code (VS Code)
+   - Download and install from the official website. [https://soft98.ir/software/programming/53-visual-studio-code-1.html]
+
+2. Node.js (LTS version)
+   - Download and install from the official website. [https://nodejs.org/en/download/current]
+   - Verify installation:
+     node -v
+     npm -v
+
+3. IntelliJ IDEA
+   - Download and install. [https://soft98.ir/software/programming/14987-intellij.html]
+
+4. Java OpenJDK 23
+   - Install OpenJDK 23. [https://www.oracle.com/java/technologies/javase/jdk23-archive-downloads.html]
+   - Verify installation:
+     java -version
+
+5. Docker (Latest version)
+   - Install Docker Desktop. [https://www.yasdl.com/309404/%D8%AF%D8%A7%D9%86%D9%84%D9%88%D8%AF-docker.html]
+   - Verify installation:
+     docker --version
+     docker compose version
+
+
+------------------------------------------------------------
+2) Front-end (React) Setup
+------------------------------------------------------------
+
+1. Open a terminal and go to:
+
+   ./source code/EduAccountingWebsite/Front-end
+
+2. Install dependencies and start the app:
+
+   npm install
+   npm start
+
+3. The React app will run at:
+
+   http://localhost:3000
+
+
+------------------------------------------------------------
+3) Back-end (Spring Boot) Setup (Docker Compose)
+------------------------------------------------------------
+
+1. Open a terminal and go to:
+
+   ./source code/EduAccountingWebsite/Back-end/Untitled
+
+2. Run Docker Compose:
+
+   docker compose up -d
+
+3. This will start the back-end , MySQL , Redis containers.
+
+
+------------------------------------------------------------
+4) Database Setup (MySQL)
+------------------------------------------------------------
+
+1. Locate the SQL backup file:
+
+   ./source code/EduAccountingWebsite/Database/educationAccountingSystem.sql
+
+2. Load the SQL file into the MySQL service.
+
+  Using Terminal (Docker):
+
+   1) Find the MySQL container name:
+
+      docker ps
+
+   2) Run:
+
+      docker exec -i <mysql_container_name> mysql -u root -p < educationAccountingSystem.sql
+
+   (Replace <mysql_container_name> with the actual container name.)
+
+
+------------------------------------------------------------
+5) Final Check
+------------------------------------------------------------
+
+If everything is done correctly:
+- Front-end runs at http://localhost:3000
+- Back-end runs in Docker
+- MySQL database is loaded with the backup file
+
+------------------------------------------------------------
+Notes:
+- Make sure Docker Desktop is running before starting the back-end.
+- If ports are already in use, change them in docker-compose.yml.
+- If React fails to start, verify Node.js installation.
+- you can see schema of database in ./source code/EduAccountingWebsite/Database/educationAccountingSystem.jpg
+
+------------------------------------------------------------
+5) Linux Server Setup (SSH + deploy user)
+------------------------------------------------------------
+
+1. SSH into your Linux server (example):
+
+   ssh root@YOUR_SERVER_IP
+
+2. Change SSH port to 9011
+   (This must match the GitHub Actions workflow)
+
+   - Edit SSH config:
+     sudo nano /etc/ssh/sshd_config
+
+   - Find the line:
+     #Port 22
+
+   - Change it to:
+     Port 9011
+
+   - Save the file and restart SSH:
+
+     sudo systemctl restart sshd
+
+3. Create a new user named deploy with sudo access:
+
+   sudo adduser deploy
+   sudo usermod -aG sudo deploy
+   sudo passwd deploy
+
+------------------------------------------------------------
+6) Upload Deployment Files to Server
+------------------------------------------------------------
+
+1. Go to your local folder:
+
+   ./Website CI:CD/deploy
+
+2. Copy all files to the server path:
+
+   /home/deploy
+
+Example using SCP:
+
+   scp -r "./Website CI:CD/deploy" deploy@YOUR_SERVER_IP:/home/deploy
+
+------------------------------------------------------------
+7) GitHub Repository Setup
+------------------------------------------------------------
+
+1. Create a new repository on GitHub (any name you want).
+
+2. Create a branch named back-end:
+
+   git checkout -b back-end
+
+3. Add your source code to the repository:
+
+   git add .
+   git commit -m "Add project source code"
+   git push origin back-end
+
+------------------------------------------------------------
+8) GitHub Actions (CI/CD) Setup
+------------------------------------------------------------
+
+Your repository must contain these two workflow files:
+
+- .github/workflows/deploy-frontend.yml
+- .github/workflows/deploy-backend.yml
+
+Both workflows are configured as follows:
+
+Front-end workflow triggers:
+- On push to branch: main
+- Builds and pushes a Docker image to GHCR
+- Deploys to server via SSH (port 9011)
+- Deploy folder on server: /home/deploy/react-app
+
+Back-end workflow triggers:
+- On push to branch: back-end
+- Builds and pushes a Docker image to GHCR
+- Deploys to server via SSH (port 9011)
+- Deploy folder on server: /home/deploy/back-end
+
+------------------------------------------------------------
+9) GitHub Repository Secrets & Environment Variables
+------------------------------------------------------------
+
+Go to:
+Settings → Secrets and variables → Actions
+
+Add these values:
+
+1. Secrets:
+   - SSH_HOST           (your server IP or domain)
+   - SSH_USER           (deploy)
+   - SSH_PRIVATE_KEY    (private key for deploy user)
+   - GHCR_TOKEN         (token with package write permission)
+
+2. Environment variables (in workflow or repository environment):
+   - GHCR_OWNER         (example: gavinruff007)
+   - IMAGE_NAME         (example: react-app or springboot-app)
+
+3. Front-end only:
+   - REACT_APP_API_URL  (backend URL, e.g. http://YOUR_SERVER_IP:8080)
+
+------------------------------------------------------------
+10) Important Configuration: Back-end application.yml
+------------------------------------------------------------
+
+Before pushing to the back-end branch, ensure your Spring Boot database configuration
+is not pointing to localhost.
+
+If MySQL runs in Docker Compose with service name mysql:
+
+   spring.datasource.url=jdbc:mysql://mysql:3306/yourdb
+
+If MySQL runs directly on the server (not Docker):
+
+   spring.datasource.url=jdbc:mysql://YOUR_SERVER_IP:3306/yourdb
+
+------------------------------------------------------------
+11) Deployment Paths on Server
+------------------------------------------------------------
+
+Front-end deployment folder:
+
+   /home/deploy/react-app
+
+Back-end deployment folder:
+
+   /home/deploy/back-end
+
+Each folder must contain a docker-compose.yml file.
+The workflow will update the image tag to:
+
+- ghcr.io/<GHCR_OWNER>/react-app:latest
+- ghcr.io/<GHCR_OWNER>/springboot-app:latest
+
+------------------------------------------------------------
+12) How It Works After Setup
+------------------------------------------------------------
+
+- Push to branch main:
+  → Front-end workflow runs
+  → React app updates on server
+
+- Push to branch back-end:
+  → Back-end workflow runs
+  → Spring Boot services update on server
+
+------------------------------------------------------------
+Notes:
+- Make sure Docker is installed and running on the server.
+- If ports are already in use, change them in docker-compose.yml.
+- If React fails to start locally, verify Node.js installation.

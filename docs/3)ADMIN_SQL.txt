@@ -1,0 +1,58 @@
+Database Editing Guide
+
+1. Install DataGrip
+
+ Go to the official JetBrains website and download DataGrip.
+ Install it on your computer (Windows / macOS / Linux).
+ Open DataGrip after installation.
+
+2. Create a New Database Connection
+
+ Click on File → New → Data Source**.
+
+ Choose MySQL (or your database type).
+
+ Fill in the connection details:
+
+   Host: your server IP (example: 123.45.67.89)
+   Port: 3306
+   User: root (or your database user)
+   Password: your database password
+   Database: your database name (example: education_db)
+
+ Click Test Connection** to confirm the connection works.
+
+ If prompted, download the MySQL driver (DataGrip will ask automatically).
+
+ Click OK to save the connection.
+
+3. Connect to the Database
+
+ In the Database view (left side), you will see your new connection.
+ Click the Connect button (plug icon) to connect to the database.
+
+4. Open and Edit Table Data
+
+ Expand the database and find the table you want to edit.
+ Right-click the table and select Jump to Data or **View Data**.
+ A data grid will open showing all rows in the table.
+
+5. Edit Data
+
+ Double-click any cell to edit its value.
+ After editing, press Ctrl + Enter (or click the Submit button) to save changes.
+ You can also add new rows by clicking the + icon.
+ To delete a row, select the row and click the - icon.
+
+6. Run SQL Queries (Optional)
+
+ Click New → SQL Console for the connected database.
+
+ Write SQL queries like:
+
+  ```sql
+  SELECT * FROM students;
+  UPDATE students SET name='John' WHERE id=1;
+  ```
+
+ Press [Ctrl + Enter] to run the query.
